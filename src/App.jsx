@@ -1,8 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FiHome, FiPackage } from "react-icons/fi";
 import FormSection from "./Components/FormSection";
+import PreviewSection from "./Components/PreviewSection";
 
 const App = () => {
+  const [productInfo, setProductInfo] = useState([]);
+
+  useEffect(() => {
+    fetch("/demoData.json")
+      .then((res) => res.json())
+      .then((data) => setProductInfo(data));
+  }, []);
+  console.log(productInfo);
+
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 to-blue-50 p-4 md:p-8">
       <div className="max-w-7xl mx-auto mb-8">
@@ -48,7 +58,9 @@ const App = () => {
             <FormSection></FormSection>
           </div>
           {/* right panel */}
-          <div className="lg:col-span-1 border"></div>
+          <div className="lg:col-span-1 border">
+            <PreviewSection productInfo={productInfo}></PreviewSection>
+          </div>
         </div>
       </div>
     </div>
