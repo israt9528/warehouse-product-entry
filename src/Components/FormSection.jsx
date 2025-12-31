@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { IoIosAddCircle, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import DropdownWithSearch from "./DropdownWithSearch";
+import { HiArrowPath } from "react-icons/hi2";
+import { FaLocationArrow } from "react-icons/fa";
+import { TiArrowSync } from "react-icons/ti";
+import toast from "react-hot-toast";
 
 const FormSection = () => {
-  // CTN No state
   const [ctnNo, setCtnNo] = useState("");
 
-  // Customer sections state - now an array of sections
   const [customerSections, setCustomerSections] = useState([
     {
       id: 1,
@@ -17,26 +19,25 @@ const FormSection = () => {
       weight: "",
       expressNumber: "",
       crm: "",
-      isExpanded: true, // New property for collapsible state
+      isExpanded: true,
     },
   ]);
 
-  // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
   const [newItemName, setNewItemName] = useState("");
 
-  // Sample data
   const [ctnOptions, setCtnOptions] = useState([
-    "CTN-001",
-    "CTN-002",
-    "CTN-003",
-    "CTN-004",
-    "CTN-005",
-    "CTN-101",
-    "CTN-102",
-    "CTN-201",
-    "CTN-202",
+    "SKH 506",
+    "SKH 507",
+    "SKH 508",
+    "SKH 509",
+    "SKH 510",
+    "SKH 511",
+    "SKH 512",
+    "SKH 513",
+    "SKH 514",
+    "SKH 515",
   ]);
 
   const [customerOptions, setCustomerOptions] = useState([
@@ -48,7 +49,6 @@ const FormSection = () => {
     "SRI COLLINS",
   ]);
 
-  // Handle adding new item
   const handleAddNewItem = (type) => {
     setModalType(type);
     setIsAddModalOpen(true);
@@ -62,7 +62,6 @@ const FormSection = () => {
       setCtnNo(newItemName);
     } else if (modalType === "customer") {
       setCustomerOptions([...customerOptions, newItemName]);
-      // Update customer name in all sections if needed
       setCustomerSections((sections) =>
         sections.map((section) => ({
           ...section,
@@ -76,7 +75,6 @@ const FormSection = () => {
     setIsAddModalOpen(false);
   };
 
-  // Handle input change for a specific customer section
   const handleCustomerSectionChange = (sectionId, field, value) => {
     setCustomerSections((sections) =>
       sections.map((section) =>
@@ -85,7 +83,6 @@ const FormSection = () => {
     );
   };
 
-  // Toggle collapsible section
   const toggleSectionCollapse = (sectionId) => {
     setCustomerSections((sections) =>
       sections.map((section) =>
@@ -96,7 +93,6 @@ const FormSection = () => {
     );
   };
 
-  // Add new customer section
   const addCustomerSection = () => {
     const newId = Math.max(...customerSections.map((s) => s.id), 0) + 1;
     setCustomerSections([
@@ -115,7 +111,6 @@ const FormSection = () => {
     ]);
   };
 
-  // Remove customer section
   const removeCustomerSection = (sectionId) => {
     if (customerSections.length > 1) {
       setCustomerSections((sections) =>
@@ -124,7 +119,6 @@ const FormSection = () => {
     }
   };
 
-  // Reset form function
   const resetForm = () => {
     setCtnNo("");
     setCustomerSections([
@@ -142,42 +136,36 @@ const FormSection = () => {
     ]);
   };
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validate form
     if (!ctnNo.trim()) {
-      alert("Please select or enter a CTN No.");
+      toast.error("Please select or enter a CTN No.");
       return;
     }
 
-    // Check if at least one customer entry has required fields
     const hasValidEntry = customerSections.some(
       (section) => section.customerName.trim() && section.goodsName.trim()
     );
 
     if (!hasValidEntry) {
-      alert(
+      toast.error(
         "Please fill in at least one customer entry with Customer Name and Goods Name."
       );
       return;
     }
 
-    // Prepare data for submission
     const submissionData = {
       ctnNo,
-      customerEntries: customerSections.map(({ ...rest }) => rest), // Remove isExpanded from submission
+      customerEntries: customerSections.map(({ ...rest }) => rest),
     };
 
     console.log("Form submitted:", submissionData);
 
-    // Show success message with counts
-    alert(
-      `Form submitted successfully!\n\nCTN No: ${ctnNo}\nCustomer Entries: ${customerSections.length}`
+    toast.success(
+      `Form submitted successfully!\nCTN No: ${ctnNo}\nCustomer Entries: ${customerSections.length}`
     );
 
-    // Reset form after successful submission
     resetForm();
   };
 
@@ -185,62 +173,77 @@ const FormSection = () => {
     <div>
       {/* Add Item Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 bg-white/60 bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 animate-scale-in">
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">
-              Add New {modalType === "ctn" ? "CTN No" : "Customer"}
-            </h3>
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Enter {modalType === "ctn" ? "CTN number" : "customer name"}
-              </label>
-              <input
-                type="text"
-                value={newItemName}
-                onChange={(e) => setNewItemName(e.target.value)}
-                placeholder={`Enter ${
-                  modalType === "ctn" ? "CTN-XXX" : "customer name"
-                }`}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
-                autoFocus
-              />
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-linear-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-300">
+            <div className="bg-linear-to-r from-purple-500 to-blue-500 p-6 text-white">
+              <h3 className="text-2xl font-bold">
+                Add New {modalType === "ctn" ? "CTN No" : "Customer"}
+              </h3>
+              <p className="text-purple-100 mt-1">Add to dropdown options</p>
             </div>
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsAddModalOpen(false);
-                  setNewItemName("");
-                }}
-                className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-200"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleSaveNewItem}
-                className="flex-1 px-6 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-all duration-200"
-              >
-                Add
-              </button>
+            <div className="p-6">
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Enter {modalType === "ctn" ? "CTN number" : "customer name"}
+                </label>
+                <input
+                  type="text"
+                  value={newItemName}
+                  onChange={(e) => setNewItemName(e.target.value)}
+                  placeholder={`Enter ${
+                    modalType === "ctn" ? "CTN-XXX" : "customer name"
+                  }`}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+                  autoFocus
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsAddModalOpen(false);
+                    setNewItemName("");
+                  }}
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-all duration-200 hover:shadow-md"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveNewItem}
+                  className="flex-1 px-6 py-3 bg-linear-to-r from-purple-500 to-blue-500 text-white font-medium rounded-xl hover:from-purple-600 hover:to-blue-600 transition-all duration-200 shadow-md hover:shadow-lg"
+                >
+                  Add {modalType === "ctn" ? "CTN" : "Customer"}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
       <form className="text-black" onSubmit={handleSubmit}>
-        <div className="p-8 space-y-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
-              <span className="text-white font-bold text-xl">#</span>
+        <div className="p-6 md:p-8 space-y-6">
+          {/* Form Header */}
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-xl bg-linear-to-r from-purple-500 to-blue-500 flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-xl">#</span>
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-gray-800">
+                  Product Entry Form
+                </h3>
+                <p className="text-gray-600">Fill all required fields</p>
+              </div>
             </div>
-            <h3 className="text-2xl font-bold text-gray-800">
-              Product Entry Form
-            </h3>
+            <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-linear-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
+              <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+              <span className="text-sm font-medium text-gray-700">Online</span>
+            </div>
           </div>
 
           {/* CTN No Field */}
-          <div className="mb-6">
+          <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-5 border border-blue-200">
             <DropdownWithSearch
               label="CTN No"
               options={ctnOptions}
@@ -254,13 +257,15 @@ const FormSection = () => {
           </div>
 
           {/* Add Customer Section Button */}
-          <div className="mb-6 flex justify-center">
+          <div className="flex justify-center">
             <button
               type="button"
               onClick={addCustomerSection}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+              className="flex items-center gap-3 px-6 py-3 bg-linear-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
-              <IoIosAddCircle className="h-5 w-5" />
+              <div className="h-8 w-8 rounded-lg bg-white/20 flex items-center justify-center">
+                <IoIosAddCircle className="h-5 w-5" />
+              </div>
               Add Customer Entry
             </button>
           </div>
@@ -269,42 +274,35 @@ const FormSection = () => {
           {customerSections.map((section, index) => (
             <div
               key={section.id}
-              className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl shadow-lg border border-purple-100 overflow-hidden transition-all duration-300"
+              className="bg-linear-to-br from-white to-blue-50 rounded-2xl shadow-lg border-2 border-blue-100 overflow-hidden transition-all duration-300 hover:border-purple-200"
             >
-              {/* Section header with collapsible button and remove button */}
-              <div className="flex justify-between items-center p-6 border-b border-purple-100 bg-gradient-to-r from-purple-50 to-blue-50">
+              {/* Section header */}
+              <div className="flex justify-between items-center p-5 md:p-6 border-b border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => toggleSectionCollapse(section.id)}
-                    className="flex items-center gap-2 text-gray-800 hover:text-purple-600 transition-colors duration-200"
+                    className="flex items-center gap-3 text-gray-800 hover:text-purple-600 transition-colors duration-200"
                   >
-                    {section.isExpanded ? (
-                      <IoIosArrowUp className="h-5 w-5" />
-                    ) : (
-                      <IoIosArrowDown className="h-5 w-5" />
-                    )}
-                    <h4 className="text-xl font-bold">
-                      Customer Entry #{index + 1}
-                    </h4>
+                    <div className="h-10 w-10 rounded-lg bg-linear-to-r from-purple-500 to-blue-500 flex items-center justify-center shadow-md">
+                      <span className="text-white font-bold">{index + 1}</span>
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold">
+                        Customer Entry #{index + 1}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        Click to {section.isExpanded ? "collapse" : "expand"}
+                      </p>
+                    </div>
                   </button>
-
-                  {/* Status indicator */}
-                  <div
-                    className={`h-2 w-2 rounded-full ${
-                      section.customerName && section.goodsName
-                        ? "bg-green-500"
-                        : "bg-gray-300"
-                    }`}
-                  ></div>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  {/* Collapsible button */}
                   <button
                     type="button"
                     onClick={() => toggleSectionCollapse(section.id)}
-                    className="px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 hover:from-blue-200 hover:to-purple-200 rounded-lg transition-all duration-200 font-medium flex items-center gap-2"
+                    className="px-4 py-2 bg-linear-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 rounded-lg transition-all duration-200 font-medium flex items-center gap-2 shadow-md hover:shadow-lg"
                   >
                     {section.isExpanded ? (
                       <>
@@ -319,12 +317,11 @@ const FormSection = () => {
                     )}
                   </button>
 
-                  {/* Remove button */}
                   {customerSections.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeCustomerSection(section.id)}
-                      className="px-4 py-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg transition-colors duration-200 font-medium"
+                      className="px-4 py-2 bg-linear-to-r from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 rounded-lg transition-all duration-200 font-medium shadow-md hover:shadow-lg"
                     >
                       Remove
                     </button>
@@ -334,15 +331,15 @@ const FormSection = () => {
 
               {/* Collapsible content */}
               <div
-                className={`transition-all duration-300 ease-in-out ${
+                className={`transition-all duration-500 ease-in-out ${
                   section.isExpanded
-                    ? "max-h-[2000px] opacity-100 p-6"
+                    ? "max-h-500 opacity-100 p-5 md:p-6"
                     : "max-h-0 opacity-0 overflow-hidden"
                 }`}
               >
                 <div className="space-y-6">
                   {/* Customer Name Field */}
-                  <div>
+                  <div className="bg-linear-to-r from-purple-50 to-blue-50 rounded-xl p-5 border border-purple-100">
                     <DropdownWithSearch
                       label="Customer Name"
                       options={customerOptions}
@@ -362,159 +359,92 @@ const FormSection = () => {
                   </div>
 
                   {/* Other Fields Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-black font-medium text-lg mb-2">
-                        Chinese name
-                      </label>
-                      <input
-                        type="text"
-                        value={section.chineseName}
-                        onChange={(e) =>
-                          handleCustomerSectionChange(
-                            section.id,
-                            "chineseName",
-                            e.target.value
-                          )
-                        }
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                        placeholder="Enter Chinese name"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-black font-medium text-lg mb-2">
-                        Goods name
-                      </label>
-                      <input
-                        type="text"
-                        value={section.goodsName}
-                        onChange={(e) =>
-                          handleCustomerSectionChange(
-                            section.id,
-                            "goodsName",
-                            e.target.value
-                          )
-                        }
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                        placeholder="Enter goods name"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-black font-medium text-lg mb-2">
-                        Goods Quantity
-                      </label>
-                      <input
-                        type="number"
-                        value={section.goodsQuantity}
-                        onChange={(e) =>
-                          handleCustomerSectionChange(
-                            section.id,
-                            "goodsQuantity",
-                            e.target.value
-                          )
-                        }
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                        placeholder="Enter quantity"
-                        min="1"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-black font-medium text-lg mb-2">
-                        Weight (KGs)
-                      </label>
-                      <input
-                        type="number"
-                        value={section.weight}
-                        onChange={(e) =>
-                          handleCustomerSectionChange(
-                            section.id,
-                            "weight",
-                            e.target.value
-                          )
-                        }
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                        placeholder="Enter weight in KGs"
-                        step="0.01"
-                        min="0"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-black font-medium text-lg mb-2">
-                        Express Number
-                      </label>
-                      <input
-                        type="text"
-                        value={section.expressNumber}
-                        onChange={(e) =>
-                          handleCustomerSectionChange(
-                            section.id,
-                            "expressNumber",
-                            e.target.value
-                          )
-                        }
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                        placeholder="Enter express number"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-black font-medium text-lg mb-2">
-                        CBM
-                      </label>
-                      <input
-                        type="number"
-                        value={section.crm}
-                        onChange={(e) =>
-                          handleCustomerSectionChange(
-                            section.id,
-                            "crm",
-                            e.target.value
-                          )
-                        }
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                        placeholder="Enter CBM"
-                        step="0.001"
-                        min="0"
-                      />
-                    </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {[
+                      {
+                        label: "Chinese name",
+                        field: "chineseName",
+                        type: "text",
+                      },
+                      { label: "Goods name", field: "goodsName", type: "text" },
+                      {
+                        label: "Goods Quantity",
+                        field: "goodsQuantity",
+                        type: "number",
+                      },
+                      {
+                        label: "Weight (KGs)",
+                        field: "weight",
+                        type: "number",
+                        step: "0.01",
+                      },
+                      {
+                        label: "Express Number",
+                        field: "expressNumber",
+                        type: "text",
+                      },
+                      {
+                        label: "CBM",
+                        field: "crm",
+                        type: "number",
+                        step: "0.001",
+                      },
+                    ].map((fieldConfig, idx) => (
+                      <div key={idx} className="group">
+                        <label className="block text-black font-medium text-lg mb-2">
+                          {fieldConfig.label}
+                        </label>
+                        <input
+                          type={fieldConfig.type}
+                          value={section[fieldConfig.field]}
+                          onChange={(e) =>
+                            handleCustomerSectionChange(
+                              section.id,
+                              fieldConfig.field,
+                              e.target.value
+                            )
+                          }
+                          className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 group-hover:border-blue-300"
+                          placeholder={`Enter ${fieldConfig.label.toLowerCase()}`}
+                          min={fieldConfig.type === "number" ? "0" : undefined}
+                          step={fieldConfig.step}
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
 
-              {/* Section footer with quick info */}
+              {/* Collapsed footer */}
               {!section.isExpanded && (
-                <div className="p-4 border-t border-purple-100 bg-gradient-to-r from-blue-50 to-purple-50">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-4">
-                      <span className="text-gray-600">
-                        Customer:{" "}
+                <div className="p-4 border-t border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <div className="flex items-center gap-4 flex-wrap">
+                      <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-lg shadow-sm">
+                        <span className="text-gray-600">Customer:</span>
                         <span className="font-semibold text-gray-800">
                           {section.customerName || "Not set"}
                         </span>
-                      </span>
-                      <span className="text-gray-600">
-                        Goods:{" "}
+                      </div>
+                      <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-lg shadow-sm">
+                        <span className="text-gray-600">Goods:</span>
                         <span className="font-semibold text-gray-800">
                           {section.goodsName || "Not set"}
                         </span>
-                      </span>
-                      <span className="text-gray-600">
-                        Qty:{" "}
+                      </div>
+                      <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-lg shadow-sm">
+                        <span className="text-gray-600">Qty:</span>
                         <span className="font-semibold text-gray-800">
                           {section.goodsQuantity || "0"}
                         </span>
-                      </span>
+                      </div>
                     </div>
                     <button
                       type="button"
                       onClick={() => toggleSectionCollapse(section.id)}
-                      className="text-purple-600 hover:text-purple-700 font-medium"
+                      className="text-purple-600 hover:text-purple-700 font-medium hover:underline"
                     >
-                      Expand to edit
+                      Expand to edit →
                     </button>
                   </div>
                 </div>
@@ -522,67 +452,25 @@ const FormSection = () => {
             </div>
           ))}
 
-          {/* Customer Sections Counter */}
-          {customerSections.length > 1 && (
-            <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg p-4 text-center">
-              <p className="text-gray-700 font-medium">
-                You have added{" "}
-                <span className="text-purple-600 font-bold">
-                  {customerSections.length}
-                </span>{" "}
-                customer entr{customerSections.length > 1 ? "ies" : "y"}
-              </p>
-              <div className="mt-2 flex items-center justify-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    // Expand all sections
-                    setCustomerSections((sections) =>
-                      sections.map((section) => ({
-                        ...section,
-                        isExpanded: true,
-                      }))
-                    );
-                  }}
-                  className="px-3 py-1 text-sm bg-white border border-purple-200 text-purple-600 hover:bg-purple-50 rounded-md transition-colors duration-200"
-                >
-                  Expand All
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    // Collapse all sections
-                    setCustomerSections((sections) =>
-                      sections.map((section) => ({
-                        ...section,
-                        isExpanded: false,
-                      }))
-                    );
-                  }}
-                  className="px-3 py-1 text-sm bg-white border border-purple-200 text-purple-600 hover:bg-purple-50 rounded-md transition-colors duration-200"
-                >
-                  Collapse All
-                </button>
-              </div>
+          {/* Summary Section */}
+          <div className="bg-linear-to-r from-blue-100 to-purple-100 rounded-2xl p-6 border border-blue-200">
+            {/* Form Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <button
+                type="submit"
+                className="flex-1 flex justify-center items-center gap-2 px-6 py-4 bg-linear-to-r from-green-500 to-emerald-500 text-white font-bold rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                <FaLocationArrow /> Submit All Entries
+              </button>
+
+              <button
+                type="button"
+                onClick={resetForm}
+                className="flex-1 flex justify-center items-center gap-2 px-6 py-4 border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-all duration-200 hover:shadow-md"
+              >
+                <TiArrowSync size={24} /> Reset Form
+              </button>
             </div>
-          )}
-
-          {/* Form Buttons */}
-          <div className="flex flex-wrap gap-4 pt-6">
-            <button
-              type="submit"
-              className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              Submit All Entries
-            </button>
-
-            <button
-              type="button"
-              onClick={resetForm}
-              className="px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-200"
-            >
-              Reset Form
-            </button>
           </div>
         </div>
       </form>
