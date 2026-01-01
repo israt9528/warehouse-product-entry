@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { IoIosAddCircle, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import DropdownWithSearch from "./DropdownWithSearch";
 import { HiArrowPath } from "react-icons/hi2";
-import { FaLocationArrow } from "react-icons/fa";
+import { FaLocationArrow, FaTrash } from "react-icons/fa";
 import { TiArrowSync } from "react-icons/ti";
 import toast from "react-hot-toast";
 
@@ -307,12 +307,10 @@ const FormSection = () => {
                     {section.isExpanded ? (
                       <>
                         <IoIosArrowUp className="h-4 w-4" />
-                        Collapse
                       </>
                     ) : (
                       <>
                         <IoIosArrowDown className="h-4 w-4" />
-                        Expand
                       </>
                     )}
                   </button>
@@ -323,7 +321,7 @@ const FormSection = () => {
                       onClick={() => removeCustomerSection(section.id)}
                       className="px-4 py-2 bg-linear-to-r from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 rounded-lg transition-all duration-200 font-medium shadow-md hover:shadow-lg"
                     >
-                      Remove
+                      <FaTrash className="h-4 w-4"></FaTrash>
                     </button>
                   )}
                 </div>
@@ -455,7 +453,7 @@ const FormSection = () => {
           {/* Summary Section */}
           <div className="bg-linear-to-r from-blue-100 to-purple-100 rounded-2xl p-6 border border-blue-200">
             {/* Form Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <button
                 type="submit"
                 className="flex-1 flex justify-center items-center gap-2 px-6 py-4 bg-linear-to-r from-green-500 to-emerald-500 text-white font-bold rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"

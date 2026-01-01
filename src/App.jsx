@@ -94,6 +94,7 @@ const App = () => {
           <div className="lg:col-span-2">
             <div className="bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 rounded-t-2xl p-6 text-white shadow-lg relative overflow-hidden">
               <div className="absolute inset-0 bg-linear-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20"></div>
+
               <div className="relative z-10">
                 <div className="flex items-center justify-between">
                   <div>
@@ -109,7 +110,7 @@ const App = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-b-2xl rounded-tr-2xl shadow-2xl overflow-hidden border border-gray-200">
+            <div className="bg-white rounded-b-2xl shadow-2xl overflow-hidden border border-gray-200">
               <FormSection />
             </div>
           </div>
