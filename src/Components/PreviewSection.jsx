@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   FiPackage,
   FiUser,
@@ -11,9 +11,13 @@ import {
   FiBarChart,
   FiDollarSign,
   FiMapPin,
+  FiChevronDown,
+  FiChevronUp,
 } from "react-icons/fi";
 
 const PreviewSection = ({ productInfo }) => {
+  const [isCustomerExpanded, setIsCustomerExpanded] = useState(false);
+
   console.log(productInfo);
   if (!productInfo || productInfo.length === 0) {
     return (
@@ -64,9 +68,9 @@ const PreviewSection = ({ productInfo }) => {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-white/20 px-3 py-1.5 rounded-full">
+          <div className="flex items-center gap-2 bg-white/20 px-3 py-2 rounded-full">
             <FiCheckCircle className="w-4 h-4 text-green-400" />
-            <span className="text-sm font-medium">Complete & Verified</span>
+            <span className="text-sm font-medium">Complete</span>
           </div>
         </div>
       </div>
@@ -88,75 +92,96 @@ const PreviewSection = ({ productInfo }) => {
             <span className="font-bold text-lg text-gray-800">{ctn_no}</span>
           </div>
 
-          {/* Customer Information */}
-          <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                <FiUser className="w-5 h-5 text-purple-600" />
-              </div>
-              <div>
-                <p className="font-medium text-gray-700">Customer</p>
-                <p className="text-sm text-gray-500">Shipment recipient</p>
-              </div>
-            </div>
-            <span className="font-bold text-lg text-gray-800 truncate max-w-35">
-              {customer_mark}
-            </span>
-          </div>
-
-          {/* Product Name Section */}
-          <div className="flex items-center justify-between p-3 bg-pink-50 rounded-lg border-b border-gray-100">
-            <div className="flex items-start gap-3">
-              <div className="h-10 w-10 rounded-lg bg-linear-to-br from-pink-100 to-pink-200 flex items-center justify-center">
-                <FiBox className="w-6 h-6 text-pink-500" />
-              </div>
-              <div>
-                <p className="font-medium text-gray-700">Product Name</p>
-                <p className="text-sm text-gray-500">Chinese Name</p>
-              </div>
-            </div>
-            <div>
-              <h3 className="font-bold text-lg text-gray-800">{goods_name}</h3>
-              <p className="text-gray-600">{chinese_name}</p>
-            </div>
-          </div>
-
-          {/* Quantity & Weight Row */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="p-3 bg-green-50 rounded-lg">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="h-9 w-9 rounded-lg bg-green-100 flex items-center justify-center">
-                  <FiShoppingCart className="w-4 h-4 text-green-600" />
+          {/* Customer Information - Collapsible */}
+          <div
+            className="cursor-pointer"
+            onClick={() => setIsCustomerExpanded(!isCustomerExpanded)}
+          >
+            <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors duration-200">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                  <FiUser className="w-5 h-5 text-purple-600" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-700">Quantity</p>
+                  <p className="font-medium text-gray-700">Customer</p>
+                  <p className="text-sm text-gray-500">Shipment recipient</p>
                 </div>
               </div>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-gray-800">
-                  {formattedQuantity}
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-gray-800 truncate max-w-35">
+                  {customer_mark}
                 </span>
-                <span className="text-gray-600">PCS</span>
-              </div>
-            </div>
-
-            <div className="p-3 bg-amber-50 rounded-lg">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="h-9 w-9 rounded-lg bg-amber-100 flex items-center justify-center">
-                  <FiBarChart className="w-4 h-4 text-amber-600" />
+                <div className="ml-2">
+                  {isCustomerExpanded ? (
+                    <FiChevronUp className="w-5 h-5 text-purple-600" />
+                  ) : (
+                    <FiChevronDown className="w-5 h-5 text-purple-600" />
+                  )}
                 </div>
-                <div>
-                  <p className="font-medium text-gray-700">Weight</p>
-                </div>
-              </div>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-gray-800">
-                  {formattedWeight.toFixed(2)}
-                </span>
-                <span className="text-gray-600">KGs</span>
               </div>
             </div>
           </div>
+
+          {/* Product Name Section - Collapsible Content */}
+          {isCustomerExpanded && (
+            <div className="space-y-3 ml-3 pl-3 border-l-2 border-purple-200 animate-fadeIn">
+              {/* Product Name Section */}
+              <div className="flex items-center justify-between p-3 bg-pink-50 rounded-lg border-b border-gray-100">
+                <div className="flex items-start gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-linear-to-br from-pink-100 to-pink-200 flex items-center justify-center">
+                    <FiBox className="w-6 h-6 text-pink-500" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-700">Product Name</p>
+                    <p className="text-sm text-gray-500">Chinese Name</p>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-gray-800">
+                    {goods_name}
+                  </h3>
+                  <p className="text-gray-600">{chinese_name}</p>
+                </div>
+              </div>
+
+              {/* Quantity & Weight Row */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-green-50 rounded-lg">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="h-9 w-9 rounded-lg bg-green-100 flex items-center justify-center">
+                      <FiShoppingCart className="w-4 h-4 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-700">Quantity</p>
+                    </div>
+                  </div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-bold text-gray-800">
+                      {formattedQuantity}
+                    </span>
+                    <span className="text-gray-600">PCS</span>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-amber-50 rounded-lg">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="h-9 w-9 rounded-lg bg-amber-100 flex items-center justify-center">
+                      <FiBarChart className="w-4 h-4 text-amber-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-700">Weight</p>
+                    </div>
+                  </div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-bold text-gray-800">
+                      {formattedWeight.toFixed(2)}
+                    </span>
+                    <span className="text-gray-600">KGs</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Shipping Information */}
           <div className="p-3 bg-gray-50 rounded-lg">

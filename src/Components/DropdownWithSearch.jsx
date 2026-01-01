@@ -8,13 +8,16 @@ const DropdownWithSearch = ({
   onSelect,
   onAddNew,
   placeholder = "Select or search...",
-  icon: Icon = IoIosAddCircle,
   isRequired = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredOptions, setFilteredOptions] = useState(options);
+  const [filteredOptions, setFilteredOptions] = useState([]);
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    setFilteredOptions(options);
+  }, [options]);
 
   // Filter options based on search term
   useEffect(() => {
@@ -69,7 +72,7 @@ const DropdownWithSearch = ({
             {selectedValue || placeholder}
           </span>
           <IoIosArrowDown
-            className={`h-5 w-5 text-gray-500 transition-transform duration-200 ${
+            className={`h-5 w-5 text-purple-500 transition-transform duration-200 ${
               isOpen ? "rotate-180" : ""
             }`}
           />
@@ -79,10 +82,10 @@ const DropdownWithSearch = ({
         <button
           type="button"
           onClick={onAddNew}
-          className="absolute right-10 top-1/2 transform -translate-y-1/2 p-1 hover:text-purple-500 transition-colors duration-200"
+          className="absolute right-10 top-1/2 transform -translate-y-1/2 p-1 text-blue-400 hover:text-purple-500 transition-colors duration-200"
           title={`Add new ${label.toLowerCase()}`}
         >
-          <Icon size={24} />
+          <IoIosAddCircle size={24} />
         </button>
 
         {/* Dropdown menu */}
@@ -131,7 +134,7 @@ const DropdownWithSearch = ({
                       <button
                         type="button"
                         onClick={() => {
-                          onAddNew();
+                          onAddNew(searchTerm);
                           setIsOpen(false);
                         }}
                         className="text-sm text-purple-600 hover:text-purple-700 font-medium"
@@ -149,12 +152,12 @@ const DropdownWithSearch = ({
               <button
                 type="button"
                 onClick={() => {
-                  onAddNew();
+                  onAddNew(searchTerm || "");
                   setIsOpen(false);
                 }}
                 className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-all duration-200 font-medium"
               >
-                <Icon className="h-4 w-4" />
+                <IoIosAddCircle className="h-4 w-4" />
                 Add New {label}
               </button>
             </div>
