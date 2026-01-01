@@ -14,6 +14,7 @@ import {
   FiChevronDown,
   FiChevronUp,
 } from "react-icons/fi";
+import { PiShippingContainer } from "react-icons/pi";
 
 const PreviewSection = ({ productInfo }) => {
   const [isCustomerExpanded, setIsCustomerExpanded] = useState(false);
@@ -37,6 +38,7 @@ const PreviewSection = ({ productInfo }) => {
   }
 
   const {
+    shipment,
     ctn_no,
     customer_mark,
     chinese_name,
@@ -55,7 +57,7 @@ const PreviewSection = ({ productInfo }) => {
   return (
     <div className=" bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
       {/* Header */}
-      <div className="bg-linear-to-r from-blue-600 to-indigo-700 p-5 text-white">
+      <div className="bg-linear-to-r from-[#008594] via-[#0d9488] to-[#10b981] p-5 text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-white/20 flex items-center justify-center">
@@ -78,6 +80,20 @@ const PreviewSection = ({ productInfo }) => {
       {/* Main Content */}
       <div className="p-5">
         <div className="space-y-4">
+          {/* Shipment No */}
+          <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-emerald-100 flex items-center justify-center">
+                <PiShippingContainer className="w-5 h-5 text-emerald-600" />
+              </div>
+              <div>
+                <p className="font-medium text-gray-700">Shipment No</p>
+                <p className="text-sm text-gray-500">Shipment Info</p>
+              </div>
+            </div>
+            <span className="font-bold text-lg text-gray-800">{shipment}</span>
+          </div>
+
           {/* CTN Number */}
           <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
             <div className="flex items-center gap-3">

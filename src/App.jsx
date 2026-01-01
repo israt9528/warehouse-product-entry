@@ -29,7 +29,8 @@ const App = () => {
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header Section */}
         <div className="mb-8">
-          <div className="bg-linear-to-r from-blue-600 via-purple-600 to-pink-600 rounded-3xl p-6 md:p-8 text-white shadow-2xl relative overflow-hidden">
+          <div className="bg-linear-to-r from-[#008594] via-[#0ea5e9] to-[#0284c7] rounded-3xl p-6 md:p-8 text-white shadow-2xl relative overflow-hidden">
+            {" "}
             <div className="relative z-10">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex-1">
@@ -38,10 +39,10 @@ const App = () => {
                       <FiPackage className="h-7 w-7" />
                     </div>
                     <div>
-                      <h1 className="text-3xl md:text-4xl font-bold bg-linear-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                      <h1 className="text-3xl md:text-4xl font-bold bg-linear-to-r from-white to-cyan-100 bg-clip-text text-transparent">
                         Warehouse Product Entry
                       </h1>
-                      <p className="text-blue-100 mt-2 text-lg">
+                      <p className="text-cyan-100 mt-2 text-lg">
                         Streamlined product intake system with real-time preview
                       </p>
                     </div>
@@ -76,8 +77,8 @@ const App = () => {
                 </div>
 
                 {/* Status Badge */}
-                <div className="flex items-center gap-3 bg-linear-to-r from-emerald-500/30 to-green-500/30 backdrop-blur-sm px-5 py-3 rounded-2xl border border-white/20">
-                  <div className="h-3 w-3 rounded-full bg-emerald-300 animate-pulse"></div>
+                <div className="flex items-center gap-3 bg-linear-to-r from-emerald-500/30 to-cyan-500/30 backdrop-blur-sm px-5 py-3 rounded-2xl border border-white/20">
+                  <div className="h-3 w-3 rounded-full bg-cyan-300 animate-pulse"></div>
                   <div className="text-center">
                     <p className="text-sm opacity-90">System Status</p>
                     <p className="text-xl font-bold">Operational</p>
@@ -92,7 +93,7 @@ const App = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Panel - Form */}
           <div className="lg:col-span-2">
-            <div className="bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 rounded-t-2xl p-6 text-white shadow-lg relative overflow-hidden">
+            <div className="bg-linear-to-r from-[#008594] via-[#3b82f6] to-[#8b5cf6] rounded-t-2xl p-6 text-white shadow-lg relative overflow-hidden">
               <div className="absolute inset-0 bg-linear-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20"></div>
 
               <div className="relative z-10">

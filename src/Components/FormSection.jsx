@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 
 const FormSection = () => {
   const [ctnNo, setCtnNo] = useState("");
+  const [shipment, setShipment] = useState(""); // Add shipment state
 
   const [customerSections, setCustomerSections] = useState([
     {
@@ -40,6 +41,14 @@ const FormSection = () => {
     "SKH 515",
   ]);
 
+  const [shipmentOptions, setShipmentOptions] = useState([
+    "Shipment 1",
+    "Shipment 2",
+    "Shipment 3",
+    "Shipment 4",
+    "Shipment 5",
+  ]);
+
   const [customerOptions, setCustomerOptions] = useState([
     "PURPLE WAVE",
     "ADNAN ROOMY",
@@ -69,6 +78,9 @@ const FormSection = () => {
             section.customerName === "" ? newItemName : section.customerName,
         }))
       );
+    } else if (modalType === "shipment") {
+      setShipmentOptions([...shipmentOptions, newItemName]);
+      setShipment(newItemName);
     }
 
     setNewItemName("");
@@ -121,6 +133,7 @@ const FormSection = () => {
 
   const resetForm = () => {
     setCtnNo("");
+    setShipment("");
     setCustomerSections([
       {
         id: 1,
@@ -139,6 +152,11 @@ const FormSection = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (!shipment.trim()) {
+      toast.error("Please select or enter a Shipment.");
+      return;
+    }
+
     if (!ctnNo.trim()) {
       toast.error("Please select or enter a CTN No.");
       return;
@@ -156,6 +174,7 @@ const FormSection = () => {
     }
 
     const submissionData = {
+      shipment,
       ctnNo,
       customerEntries: customerSections.map(({ ...rest }) => rest),
     };
@@ -163,7 +182,7 @@ const FormSection = () => {
     console.log("Form submitted:", submissionData);
 
     toast.success(
-      `Form submitted successfully!\nCTN No: ${ctnNo}\nCustomer Entries: ${customerSections.length}`
+      `Form submitted successfully!\nShipment: ${shipment}\nCTN No: ${ctnNo}\nCustomer Entries: ${customerSections.length}`
     );
 
     resetForm();
@@ -177,21 +196,35 @@ const FormSection = () => {
           <div className="bg-linear-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-300">
             <div className="bg-linear-to-r from-purple-500 to-blue-500 p-6 text-white">
               <h3 className="text-2xl font-bold">
-                Add New {modalType === "ctn" ? "CTN No" : "Customer"}
+                Add New{" "}
+                {modalType === "ctn"
+                  ? "CTN No"
+                  : modalType === "shipment"
+                  ? "Shipment"
+                  : "Customer"}
               </h3>
               <p className="text-purple-100 mt-1">Add to dropdown options</p>
             </div>
             <div className="p-6">
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Enter {modalType === "ctn" ? "CTN number" : "customer name"}
+                  Enter{" "}
+                  {modalType === "ctn"
+                    ? "CTN number"
+                    : modalType === "shipment"
+                    ? "shipment name"
+                    : "customer name"}
                 </label>
                 <input
                   type="text"
                   value={newItemName}
                   onChange={(e) => setNewItemName(e.target.value)}
                   placeholder={`Enter ${
-                    modalType === "ctn" ? "CTN-XXX" : "customer name"
+                    modalType === "ctn"
+                      ? "CTN-XXX"
+                      : modalType === "shipment"
+                      ? "shipment name"
+                      : "customer name"
                   }`}
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
                   autoFocus
@@ -213,7 +246,12 @@ const FormSection = () => {
                   onClick={handleSaveNewItem}
                   className="flex-1 px-6 py-3 bg-linear-to-r from-purple-500 to-blue-500 text-white font-medium rounded-xl hover:from-purple-600 hover:to-blue-600 transition-all duration-200 shadow-md hover:shadow-lg"
                 >
-                  Add {modalType === "ctn" ? "CTN" : "Customer"}
+                  Add{" "}
+                  {modalType === "ctn"
+                    ? "CTN"
+                    : modalType === "shipment"
+                    ? "Shipment"
+                    : "Customer"}
                 </button>
               </div>
             </div>
@@ -242,6 +280,20 @@ const FormSection = () => {
             </div>
           </div>
 
+          {/* Shipment field */}
+          <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-5 border border-blue-200">
+            <DropdownWithSearch
+              label="Shipment"
+              options={shipmentOptions}
+              selectedValue={shipment}
+              onSelect={setShipment}
+              onAddNew={() => handleAddNewItem("shipment")}
+              placeholder="Select or search shipment"
+              icon={IoIosAddCircle}
+              isRequired={true}
+            />
+          </div>
+
           {/* CTN No Field */}
           <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-5 border border-blue-200">
             <DropdownWithSearch
@@ -254,20 +306,6 @@ const FormSection = () => {
               icon={IoIosAddCircle}
               isRequired={true}
             />
-          </div>
-
-          {/* Add Customer Section Button */}
-          <div className="flex justify-center">
-            <button
-              type="button"
-              onClick={addCustomerSection}
-              className="flex items-center gap-3 px-6 py-3 bg-linear-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              <div className="h-8 w-8 rounded-lg bg-white/20 flex items-center justify-center">
-                <IoIosAddCircle className="h-5 w-5" />
-              </div>
-              Add Customer Entry
-            </button>
           </div>
 
           {/* Customer Information Sections */}
@@ -329,7 +367,7 @@ const FormSection = () => {
 
               {/* Collapsible content */}
               <div
-                className={`transition-all duration-500 ease-in-out ${
+                className={`transition-all duration-200 ease-in-out ${
                   section.isExpanded
                     ? "max-h-500 opacity-100 p-5 md:p-6"
                     : "max-h-0 opacity-0 overflow-hidden"
@@ -402,7 +440,7 @@ const FormSection = () => {
                               e.target.value
                             )
                           }
-                          className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 group-hover:border-blue-300"
+                          className="w-full px-4 py-2 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 group-hover:border-blue-300"
                           placeholder={`Enter ${fieldConfig.label.toLowerCase()}`}
                           min={fieldConfig.type === "number" ? "0" : undefined}
                           step={fieldConfig.step}
@@ -456,17 +494,20 @@ const FormSection = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 type="submit"
-                className="flex-1 flex justify-center items-center gap-2 px-6 py-4 bg-linear-to-r from-green-500 to-emerald-500 text-white font-bold rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="flex-1 flex justify-center items-center gap-2 px-6 py-4 bg-linear-to-r from-[#008594] via-[#38b2ac] to-[#0ceded] text-white font-bold rounded-xl hover:from-[#026b77] hover:to-[#04c8c8] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 <FaLocationArrow /> Submit All Entries
               </button>
 
               <button
                 type="button"
-                onClick={resetForm}
-                className="flex-1 flex justify-center items-center gap-2 px-6 py-4 border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-all duration-200 hover:shadow-md"
+                onClick={addCustomerSection}
+                className="flex-1 flex items-center justify-center gap-3 px-6 py-3 bg-linear-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
-                <TiArrowSync size={24} /> Reset Form
+                <div className="h-8 w-8 rounded-lg bg-white/20 flex items-center justify-center">
+                  <IoIosAddCircle className="h-5 w-5" />
+                </div>
+                Add Customer Entry
               </button>
             </div>
           </div>
