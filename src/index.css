@@ -65,3 +65,19 @@
 .select2-results__option--highlighted[aria-selected] {
     background-color: #a855f7 !important; /* purple-500 */
 }
+
+/* Ensure the modal is always above Select2 dropdowns */
+.fixed.inset-0.z-50 {
+    z-index: 99999 !important;
+}
+
+/* Optional: Make the "Add New" button shake slightly on hover to attract attention */
+.group:hover button[title*="Add new"] {
+    animation: subtle-shake 0.5s ease-in-out;
+}
+
+@keyframes subtle-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-1px); }
+    75% { transform: translateX(1px); }
+}

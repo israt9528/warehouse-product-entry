@@ -1,65 +1,101 @@
 import React, { useState } from "react";
+
 import { IoIosAddCircle, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+
 import DropdownWithSearch from "./DropdownWithSearch";
+
 import { HiArrowPath } from "react-icons/hi2";
+
 import { FaLocationArrow, FaTrash } from "react-icons/fa";
+
 import { TiArrowSync } from "react-icons/ti";
+
 import toast from "react-hot-toast";
 
 const FormSection = () => {
   const [ctnNo, setCtnNo] = useState("");
+
   const [shipment, setShipment] = useState(""); // Add shipment state
 
   const [customerSections, setCustomerSections] = useState([
     {
       id: 1,
+
       customerName: "",
+
       chineseName: "",
+
       goodsName: "",
+
       goodsQuantity: "",
+
       weight: "",
+
       expressNumber: "",
+
       crm: "",
+
       isExpanded: true,
     },
   ]);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
   const [modalType, setModalType] = useState("");
+
   const [newItemName, setNewItemName] = useState("");
 
   const [ctnOptions, setCtnOptions] = useState([
     "SKH 506",
+
     "SKH 507",
+
     "SKH 508",
+
     "SKH 509",
+
     "SKH 510",
+
     "SKH 511",
+
     "SKH 512",
+
     "SKH 513",
+
     "SKH 514",
+
     "SKH 515",
   ]);
 
   const [shipmentOptions, setShipmentOptions] = useState([
     "Shipment 1",
+
     "Shipment 2",
+
     "Shipment 3",
+
     "Shipment 4",
+
     "Shipment 5",
   ]);
 
   const [customerOptions, setCustomerOptions] = useState([
     "PURPLE WAVE",
+
     "ADNAN ROOMY",
+
     "ABDUI KADER",
+
     "ISRAT ENAMUL",
+
     "SLS OVI",
+
     "SRI COLLINS",
   ]);
 
   const handleAddNewItem = (type) => {
     setModalType(type);
+
     setIsAddModalOpen(true);
   };
 
@@ -68,22 +104,27 @@ const FormSection = () => {
 
     if (modalType === "ctn") {
       setCtnOptions([...ctnOptions, newItemName]);
+
       setCtnNo(newItemName);
     } else if (modalType === "customer") {
       setCustomerOptions([...customerOptions, newItemName]);
+
       setCustomerSections((sections) =>
         sections.map((section) => ({
           ...section,
+
           customerName:
             section.customerName === "" ? newItemName : section.customerName,
         }))
       );
     } else if (modalType === "shipment") {
       setShipmentOptions([...shipmentOptions, newItemName]);
+
       setShipment(newItemName);
     }
 
     setNewItemName("");
+
     setIsAddModalOpen(false);
   };
 
@@ -107,17 +148,27 @@ const FormSection = () => {
 
   const addCustomerSection = () => {
     const newId = Math.max(...customerSections.map((s) => s.id), 0) + 1;
+
     setCustomerSections([
       ...customerSections,
+
       {
         id: newId,
+
         customerName: "",
+
         chineseName: "",
+
         goodsName: "",
+
         goodsQuantity: "",
+
         weight: "",
+
         expressNumber: "",
+
         crm: "",
+
         isExpanded: true,
       },
     ]);
@@ -133,17 +184,27 @@ const FormSection = () => {
 
   const resetForm = () => {
     setCtnNo("");
+
     setShipment("");
+
     setCustomerSections([
       {
         id: 1,
+
         customerName: "",
+
         chineseName: "",
+
         goodsName: "",
+
         goodsQuantity: "",
+
         weight: "",
+
         expressNumber: "",
+
         crm: "",
+
         isExpanded: true,
       },
     ]);
@@ -154,11 +215,13 @@ const FormSection = () => {
 
     if (!shipment.trim()) {
       toast.error("Please select or enter a Shipment.");
+
       return;
     }
 
     if (!ctnNo.trim()) {
       toast.error("Please select or enter a CTN No.");
+
       return;
     }
 
@@ -170,12 +233,15 @@ const FormSection = () => {
       toast.error(
         "Please fill in at least one customer entry with Customer Name and Goods Name."
       );
+
       return;
     }
 
     const submissionData = {
       shipment,
+
       ctnNo,
+
       customerEntries: customerSections.map(({ ...rest }) => rest),
     };
 
@@ -191,6 +257,7 @@ const FormSection = () => {
   return (
     <div>
       {/* Add Item Modal */}
+
       {isAddModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-linear-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-300">
@@ -203,8 +270,10 @@ const FormSection = () => {
                   ? "Shipment"
                   : "Customer"}
               </h3>
+
               <p className="text-purple-100 mt-1">Add to dropdown options</p>
             </div>
+
             <div className="p-6">
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -215,6 +284,7 @@ const FormSection = () => {
                     ? "shipment name"
                     : "customer name"}
                 </label>
+
                 <input
                   type="text"
                   value={newItemName}
@@ -230,17 +300,20 @@ const FormSection = () => {
                   autoFocus
                 />
               </div>
+
               <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => {
                     setIsAddModalOpen(false);
+
                     setNewItemName("");
                   }}
                   className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-all duration-200 hover:shadow-md"
                 >
                   Cancel
                 </button>
+
                 <button
                   type="button"
                   onClick={handleSaveNewItem}
@@ -264,6 +337,7 @@ const FormSection = () => {
           {/* Form Header */}
 
           {/* Shipment field */}
+
           <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-5 border border-blue-200">
             <DropdownWithSearch
               label="Shipment"
@@ -272,10 +346,12 @@ const FormSection = () => {
               onChange={setShipment}
               placeholder="Select shipment"
               isRequired
+              onAddNew={() => handleAddNewItem("shipment")}
             />
           </div>
 
           {/* CTN No Field */}
+
           <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-5 border border-blue-200">
             <DropdownWithSearch
               label="CTN No"
@@ -284,16 +360,19 @@ const FormSection = () => {
               onChange={setCtnNo}
               placeholder="Select CTN"
               isRequired
+              onAddNew={() => handleAddNewItem("ctn")}
             />
           </div>
 
           {/* Customer Information Sections */}
+
           {customerSections.map((section, index) => (
             <div
               key={section.id}
               className="bg-linear-to-br from-white to-blue-50 rounded-2xl shadow-lg border-2 border-blue-100 overflow-hidden transition-all duration-300 hover:border-purple-200"
             >
               {/* Section header */}
+
               <div className="flex justify-between items-center p-5 md:p-6 border-b border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
                 <div className="flex items-center gap-3">
                   <button
@@ -304,10 +383,12 @@ const FormSection = () => {
                     <div className="h-10 w-10 rounded-lg bg-linear-to-r from-purple-500 to-blue-500 flex items-center justify-center shadow-md">
                       <span className="text-white font-bold">{index + 1}</span>
                     </div>
+
                     <div>
                       <h4 className="text-xl font-bold">
                         Customer Entry #{index + 1}
                       </h4>
+
                       <p className="text-sm text-gray-600">
                         Click to {section.isExpanded ? "collapse" : "expand"}
                       </p>
@@ -345,6 +426,7 @@ const FormSection = () => {
               </div>
 
               {/* Collapsible content */}
+
               <div
                 className={`transition-all duration-200 ease-in-out ${
                   section.isExpanded
@@ -354,54 +436,72 @@ const FormSection = () => {
               >
                 <div className="space-y-6">
                   {/* Customer Name Field */}
+
                   <div className="bg-linear-to-r from-purple-50 to-blue-50 rounded-xl p-5 border border-purple-100">
                     <DropdownWithSearch
                       label="Customer Name"
                       options={customerOptions}
-                      // Change selectedValue to value
                       value={section.customerName}
-                      // Change onSelect to onChange
                       onChange={(value) =>
                         handleCustomerSectionChange(
                           section.id,
                           "customerName",
-                          value || "" // Handle null from clear button
+                          value || ""
                         )
                       }
                       placeholder="Select or search customer"
                       isRequired={true}
+                      onAddNew={() => handleAddNewItem("customer")} // Add this
                     />
                   </div>
 
                   {/* Other Fields Grid */}
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {[
                       {
                         label: "Chinese name",
+
                         field: "chineseName",
+
                         type: "text",
                       },
+
                       { label: "Goods name", field: "goodsName", type: "text" },
+
                       {
                         label: "Goods Quantity",
+
                         field: "goodsQuantity",
+
                         type: "number",
                       },
+
                       {
                         label: "Weight (KGs)",
+
                         field: "weight",
+
                         type: "number",
+
                         step: "0.01",
                       },
+
                       {
                         label: "Express Number",
+
                         field: "expressNumber",
+
                         type: "text",
                       },
+
                       {
                         label: "CBM",
+
                         field: "crm",
+
                         type: "number",
+
                         step: "0.001",
                       },
                     ].map((fieldConfig, idx) => (
@@ -409,13 +509,16 @@ const FormSection = () => {
                         <label className="block text-black font-medium text-lg mb-2">
                           {fieldConfig.label}
                         </label>
+
                         <input
                           type={fieldConfig.type}
                           value={section[fieldConfig.field]}
                           onChange={(e) =>
                             handleCustomerSectionChange(
                               section.id,
+
                               fieldConfig.field,
+
                               e.target.value
                             )
                           }
@@ -431,29 +534,36 @@ const FormSection = () => {
               </div>
 
               {/* Collapsed footer */}
+
               {!section.isExpanded && (
                 <div className="p-4 border-t border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                     <div className="flex items-center gap-4 flex-wrap">
                       <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-lg shadow-sm">
                         <span className="text-gray-600">Customer:</span>
+
                         <span className="font-semibold text-gray-800">
                           {section.customerName || "Not set"}
                         </span>
                       </div>
+
                       <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-lg shadow-sm">
                         <span className="text-gray-600">Goods:</span>
+
                         <span className="font-semibold text-gray-800">
                           {section.goodsName || "Not set"}
                         </span>
                       </div>
+
                       <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-lg shadow-sm">
                         <span className="text-gray-600">Qty:</span>
+
                         <span className="font-semibold text-gray-800">
                           {section.goodsQuantity || "0"}
                         </span>
                       </div>
                     </div>
+
                     <button
                       type="button"
                       onClick={() => toggleSectionCollapse(section.id)}
@@ -468,8 +578,10 @@ const FormSection = () => {
           ))}
 
           {/* Summary Section */}
+
           <div className="bg-linear-to-r from-blue-100 to-purple-100 rounded-2xl p-6 border border-blue-200">
             {/* Form Buttons */}
+
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 type="submit"
