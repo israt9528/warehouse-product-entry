@@ -1,2 +1,67 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+
+
+/* 1. Main Container Box */
+.select2-container--default .select2-selection--single {
+    height: 48px !important; /* h-12 equivalent */
+    display: flex !important;
+    align-items: center !important;
+    border: 2px solid #d1d5db !important; /* gray-300 */
+    border-radius: 0.75rem !important; /* rounded-xl */
+    background-color: white !important;
+    transition: all 0.2s;
+    outline: none !important;
+}
+
+/* 2. Fix the Placeholder and Selected Text position */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #1f2937 !important; /* gray-800 */
+    padding-left: 1rem !important;
+    padding-right: 2rem !important;
+    line-height: normal !important;
+    margin-top: 0 !important;
+    width: 100% !important;
+}
+
+/* 3. Placeholder Color */
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #9ca3af !important; /* gray-400 */
+}
+
+/* 4. Focus State (Purple border) */
+.select2-container--focus .select2-selection--single {
+    border-color: #a855f7 !important; /* purple-500 */
+    box-shadow: 0 0 0 2px #e9d5ff !important; /* purple-200 ring */
+}
+
+/* 5. Fix the Arrow Position */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 46px !important;
+    top: 0 !important;
+    right: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* 6. Dropdown List Styling */
+.select2-dropdown {
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+    overflow: hidden !important;
+    z-index: 9999 !important;
+}
+
+/* 7. Search box inside dropdown */
+.select2-search--dropdown .select2-search__field {
+    border-radius: 0.5rem !important;
+    border: 1px solid #d1d5db !important;
+    padding: 6px 10px !important;
+}
+
+/* 8. Highlighted item in list */
+.select2-results__option--highlighted[aria-selected] {
+    background-color: #a855f7 !important; /* purple-500 */
+}

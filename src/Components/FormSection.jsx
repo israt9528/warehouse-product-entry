@@ -262,35 +262,16 @@ const FormSection = () => {
       <form className="text-black" onSubmit={handleSubmit}>
         <div className="p-6 md:p-8 space-y-6">
           {/* Form Header */}
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-xl bg-linear-to-r from-purple-500 to-blue-500 flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-xl">#</span>
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-gray-800">
-                  Product Entry Form
-                </h3>
-                <p className="text-gray-600">Fill all required fields</p>
-              </div>
-            </div>
-            <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-linear-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
-              <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
-              <span className="text-sm font-medium text-gray-700">Online</span>
-            </div>
-          </div>
 
           {/* Shipment field */}
           <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-5 border border-blue-200">
             <DropdownWithSearch
               label="Shipment"
               options={shipmentOptions}
-              selectedValue={shipment}
-              onSelect={setShipment}
-              onAddNew={() => handleAddNewItem("shipment")}
-              placeholder="Select or search shipment"
-              icon={IoIosAddCircle}
-              isRequired={true}
+              value={shipment}
+              onChange={setShipment}
+              placeholder="Select shipment"
+              isRequired
             />
           </div>
 
@@ -299,12 +280,10 @@ const FormSection = () => {
             <DropdownWithSearch
               label="CTN No"
               options={ctnOptions}
-              selectedValue={ctnNo}
-              onSelect={setCtnNo}
-              onAddNew={() => handleAddNewItem("ctn")}
-              placeholder="Select or search CTN no"
-              icon={IoIosAddCircle}
-              isRequired={true}
+              value={ctnNo}
+              onChange={setCtnNo}
+              placeholder="Select CTN"
+              isRequired
             />
           </div>
 
@@ -379,17 +358,17 @@ const FormSection = () => {
                     <DropdownWithSearch
                       label="Customer Name"
                       options={customerOptions}
-                      selectedValue={section.customerName}
-                      onSelect={(value) =>
+                      // Change selectedValue to value
+                      value={section.customerName}
+                      // Change onSelect to onChange
+                      onChange={(value) =>
                         handleCustomerSectionChange(
                           section.id,
                           "customerName",
-                          value
+                          value || "" // Handle null from clear button
                         )
                       }
-                      onAddNew={() => handleAddNewItem("customer")}
                       placeholder="Select or search customer"
-                      icon={IoIosAddCircle}
                       isRequired={true}
                     />
                   </div>
