@@ -1,13 +1,26 @@
-[
-  {
-    "ctn_no": "SKH 506",
-    "customer_mark": "PURPLE WAVE",
-    "goods_name": "COFFEE",
-    "chinese_name": "咖啡",
-    "goods_quantity": "5",
-    "weight": 6.5,
-    "express_number": "3140364701608",
-    "cbm": null
-  }
-  
-]
+{
+  "ctnNo": "SKH 508",
+  "shipment": "Shipment 3",
+  "customerEntries": [
+    {
+      "id": 1,
+      "customerName": "PURPLE WAVE",
+      "chineseName": "dgs",
+      "goodsName": "gfrrf",
+      "goodsQuantity": "34",
+      "weight": "46",
+      "crm": "654",
+      "expressNumber": "3456yt3456345"
+    },
+    {
+      "id": 2,
+      "customerName": "ADNAN ROOMY",
+      "chineseName": "wer",
+      "goodsName": "zsxcvbn",
+      "goodsQuantity": "34",
+      "weight": "33.97",
+      "crm": "9823",
+      "expressNumber": "2324567u234"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import React, { useState } from "react";
 import {
   FiPackage,
@@ -13,14 +14,39 @@ import {
   FiMapPin,
   FiChevronDown,
   FiChevronUp,
+  FiEdit2,
 } from "react-icons/fi";
 import { PiShippingContainer } from "react-icons/pi";
 
 const PreviewSection = ({ productInfo }) => {
-  const [isCustomerExpanded, setIsCustomerExpanded] = useState(false);
+  const [expandedCustomers, setExpandedCustomers] = useState({});
 
-  console.log(productInfo);
-  if (!productInfo || productInfo.length === 0) {
+  // Modal State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editData, setEditData] = useState({
+    type: "",
+    field: "",
+    value: "",
+    id: null,
+  });
+
+  const toggleCustomer = (id) => {
+    setExpandedCustomers((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  const handleEditClick = (type, field, value, id = null) => {
+    setEditData({ type, field, value, id });
+    setIsEditModalOpen(true);
+  };
+
+  if (
+    !productInfo ||
+    !productInfo.customerEntries ||
+    productInfo.customerEntries.length === 0
+  ) {
     return (
       <div className="min-h-100 bg-linear-to-br from-blue-50 to-purple-50 rounded-2xl border-2 border-dashed border-blue-200 flex flex-col items-center justify-center p-8 text-center">
         <div className="h-20 w-20 rounded-full bg-linear-to-r from-blue-100 to-purple-100 flex items-center justify-center mb-6">
@@ -30,34 +56,62 @@ const PreviewSection = ({ productInfo }) => {
           No Product Data
         </h3>
         <p className="text-gray-500 max-w-md">
-          Product information will appear here after form submission. Fill out
-          the form to see a beautiful preview of your product data.
+          Fill out the form to see a real-time preview.
         </p>
       </div>
     );
   }
 
-  const {
-    shipment,
-    ctn_no,
-    customer_mark,
-    chinese_name,
-    goods_name,
-    goods_quantity,
-    weight,
-    express_number,
-    cbm,
-  } = productInfo[0];
-
-  // Format values
-  const formattedWeight = parseFloat(weight) || 0;
-  const formattedQuantity = parseInt(goods_quantity) || 0;
-  const shippingCost = (formattedWeight * 2.5).toFixed(2);
+  const totalWeight = productInfo.customerEntries.reduce(
+    (sum, entry) => sum + (parseFloat(entry.weight) || 0),
+    0
+  );
+  const totalCost = (totalWeight * 2.5).toFixed(2);
 
   return (
-    <div className=" bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden relative">
+      {/* Edit Modal */}
+      {isEditModalOpen &&
+        createPortal(
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-9999999 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-300">
+              <div className="bg-linear-to-r from-emerald-600 to-green-500 p-6 text-white rounded-t-2xl">
+                <h3 className="text-2xl font-bold flex items-center gap-2">
+                  <FiEdit2 /> Update {editData.field}
+                </h3>
+              </div>
+              <div className="p-6">
+                <input
+                  type="text"
+                  value={editData.value}
+                  onChange={(e) =>
+                    setEditData({ ...editData, value: e.target.value })
+                  }
+                  className="w-full text-black px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-emerald-500 outline-none"
+                  autoFocus
+                />
+                <div className="flex gap-3 mt-6">
+                  <button
+                    onClick={() => setIsEditModalOpen(false)}
+                    className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => setIsEditModalOpen(false)}
+                    className="flex-1 px-6 py-3 bg-emerald-600 text-white font-medium rounded-xl hover:bg-emerald-700 shadow-md"
+                  >
+                    Save Change
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body // This sends the modal to the top level
+        )}
+
       {/* Header */}
-      <div className="bg-linear-to-r from-[#008594] via-[#0d9488] to-[#10b981] p-5 text-white">
+      <div className="bg-linear-to-r from-[#008594] via-[#0d9c90] to-[#10b981] p-5 text-white rounded-t-2xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-white/20 flex items-center justify-center">
@@ -65,209 +119,228 @@ const PreviewSection = ({ productInfo }) => {
             </div>
             <div>
               <h2 className="text-xl font-bold">Product Preview</h2>
-              <p className="text-sm text-blue-100 opacity-90">
-                Real-time product overview
+              <p className="text-sm opacity-90">Real-time overview</p>
+            </div>
+          </div>
+          <FiCheckCircle className="w-6 h-6 text-green-300" />
+        </div>
+      </div>
+
+      <div className="p-5 space-y-4">
+        {/* Shipment & CTN Grid */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-100 group relative">
+            <button
+              onClick={() =>
+                handleEditClick("shipment", "Shipment No", productInfo.shipment)
+              }
+              className="absolute top-2 right-2 p-1 bg-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity text-emerald-600 shadow-sm"
+            >
+              <FiEdit2 size={12} />
+            </button>
+            <div className="flex items-center gap-2 mb-1">
+              <PiShippingContainer className="text-emerald-600" />
+              <p className="text-xs text-emerald-600 font-bold uppercase">
+                Shipment
               </p>
             </div>
+            <p className="font-bold text-gray-800">{productInfo.shipment}</p>
           </div>
-          <div className="flex items-center gap-2 bg-white/20 px-3 py-2 rounded-full">
-            <FiCheckCircle className="w-4 h-4 text-green-400" />
-            <span className="text-sm font-medium">Complete</span>
+
+          <div className="p-3 bg-blue-50 rounded-lg border border-blue-100 group relative">
+            <button
+              onClick={() =>
+                handleEditClick("shipment", "CTN No", productInfo.ctnNo)
+              }
+              className="absolute top-2 right-2 p-1 bg-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity text-blue-600 shadow-sm"
+            >
+              <FiEdit2 size={12} />
+            </button>
+            <div className="flex items-center gap-2 mb-1">
+              <FiHash className="text-blue-600" />
+              <p className="text-xs text-blue-600 font-bold uppercase">
+                CTN No
+              </p>
+            </div>
+            <p className="font-bold text-gray-800">{productInfo.ctnNo}</p>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="p-5">
-        <div className="space-y-4">
-          {/* Shipment No */}
-          <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-emerald-100 flex items-center justify-center">
-                <PiShippingContainer className="w-5 h-5 text-emerald-600" />
-              </div>
-              <div>
-                <p className="font-medium text-gray-700">Shipment No</p>
-                <p className="text-sm text-gray-500">Shipment Info</p>
-              </div>
-            </div>
-            <span className="font-bold text-lg text-gray-800">{shipment}</span>
-          </div>
+        {/* Entries List */}
+        <div className="space-y-3">
+          {productInfo.customerEntries.map((customer) => {
+            const isExpanded = expandedCustomers[customer.id];
+            const weight = parseFloat(customer.weight) || 0;
+            const cost = (weight * 2.5).toFixed(2);
 
-          {/* CTN Number */}
-          <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                <FiHash className="w-5 h-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="font-medium text-gray-700">CTN Number</p>
-                <p className="text-sm text-gray-500">Tracking identifier</p>
-              </div>
-            </div>
-            <span className="font-bold text-lg text-gray-800">{ctn_no}</span>
-          </div>
-
-          {/* Customer Information - Collapsible */}
-          <div
-            className="cursor-pointer"
-            onClick={() => setIsCustomerExpanded(!isCustomerExpanded)}
-          >
-            <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors duration-200">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                  <FiUser className="w-5 h-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-700">Customer</p>
-                  <p className="text-sm text-gray-500">Shipment recipient</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-gray-800 truncate max-w-35">
-                  {customer_mark}
-                </span>
-                <div className="ml-2">
-                  {isCustomerExpanded ? (
-                    <FiChevronUp className="w-5 h-5 text-purple-600" />
-                  ) : (
-                    <FiChevronDown className="w-5 h-5 text-purple-600" />
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Product Name Section - Collapsible Content */}
-          {isCustomerExpanded && (
-            <div className="space-y-3 ml-3 pl-3 border-l-2 border-purple-200 animate-fadeIn">
-              {/* Product Name Section */}
-              <div className="flex items-center justify-between p-3 bg-pink-50 rounded-lg border-b border-gray-100">
-                <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-linear-to-br from-pink-100 to-pink-200 flex items-center justify-center">
-                    <FiBox className="w-6 h-6 text-pink-500" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-700">Product Name</p>
-                    <p className="text-sm text-gray-500">Chinese Name</p>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg text-gray-800">
-                    {goods_name}
-                  </h3>
-                  <p className="text-gray-600">{chinese_name}</p>
-                </div>
-              </div>
-
-              {/* Quantity & Weight Row */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-green-50 rounded-lg">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="h-9 w-9 rounded-lg bg-green-100 flex items-center justify-center">
-                      <FiShoppingCart className="w-4 h-4 text-green-600" />
+            return (
+              <div
+                key={customer.id}
+                className="border border-gray-100 rounded-xl overflow-hidden"
+              >
+                <div className="flex items-center bg-gray-50 hover:bg-purple-50 transition-colors duration-200">
+                  <button
+                    onClick={() => toggleCustomer(customer.id)}
+                    className="flex-1 flex items-center justify-between p-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="bg-purple-100 p-2 rounded-lg">
+                        <FiUser className="text-purple-600" />
+                      </div>
+                      <span className="font-bold text-gray-700">
+                        {customer.customerName}
+                      </span>
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-700">Quantity</p>
-                    </div>
-                  </div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-bold text-gray-800">
-                      {formattedQuantity}
-                    </span>
-                    <span className="text-gray-600">PCS</span>
-                  </div>
+                    <FiChevronDown
+                      className={`text-purple-600 transition-transform duration-300 ${
+                        isExpanded ? "rotate-180" : "rotate-0"
+                      }`}
+                    />
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleEditClick(
+                        "customer",
+                        "Customer Name",
+                        customer.customerName,
+                        customer.id
+                      )
+                    }
+                    className="p-3 text-purple-400 hover:text-purple-600"
+                  >
+                    <FiEdit2 size={14} />
+                  </button>
                 </div>
 
-                <div className="p-3 bg-amber-50 rounded-lg">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="h-9 w-9 rounded-lg bg-amber-100 flex items-center justify-center">
-                      <FiBarChart className="w-4 h-4 text-amber-600" />
+                {isExpanded && (
+                  <div className="p-4 bg-white space-y-4 border-t border-gray-100 animate-in fade-in slide-in-from-top-2">
+                    <div className="flex items-start justify-between p-3 bg-pink-50 rounded-lg group">
+                      <div className="flex items-start gap-3">
+                        <FiBox className="text-pink-500 mt-1" />
+                        <div>
+                          <p className="text-xs text-gray-500 uppercase">
+                            Goods Name
+                          </p>
+                          <p className="font-bold text-gray-800">
+                            {customer.goodsName}
+                          </p>
+                          <p className="text-sm text-gray-600 italic">
+                            {customer.chineseName}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() =>
+                          handleEditClick(
+                            "customer",
+                            "Goods Details",
+                            customer.goodsName,
+                            customer.id
+                          )
+                        }
+                        className="opacity-0 group-hover:opacity-100 p-1 text-pink-500"
+                      >
+                        <FiEdit2 size={14} />
+                      </button>
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-700">Weight</p>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="p-3 bg-green-50 rounded-lg relative group">
+                        <button
+                          onClick={() =>
+                            handleEditClick(
+                              "customer",
+                              "Quantity",
+                              customer.goodsQuantity,
+                              customer.id
+                            )
+                          }
+                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 text-green-600"
+                        >
+                          <FiEdit2 size={10} />
+                        </button>
+                        <div className="flex items-center gap-2 mb-1">
+                          <FiShoppingCart className="text-green-600 text-sm" />
+                          <p className="text-xs text-green-600 uppercase font-medium">
+                            Quantity
+                          </p>
+                        </div>
+                        <p className="text-xl font-bold text-gray-800">
+                          {customer.goodsQuantity}{" "}
+                          <span className="text-xs font-normal">PCS</span>
+                        </p>
+                      </div>
+
+                      <div className="p-3 bg-amber-50 rounded-lg relative group">
+                        <button
+                          onClick={() =>
+                            handleEditClick(
+                              "customer",
+                              "Weight",
+                              customer.weight,
+                              customer.id
+                            )
+                          }
+                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 text-amber-600"
+                        >
+                          <FiEdit2 size={10} />
+                        </button>
+                        <div className="flex items-center gap-2 mb-1">
+                          <FiBarChart className="text-amber-600 text-sm" />
+                          <p className="text-xs text-amber-600 uppercase font-medium">
+                            Weight
+                          </p>
+                        </div>
+                        <p className="text-xl font-bold text-gray-800">
+                          {weight}{" "}
+                          <span className="text-xs font-normal">KGs</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-gray-900 rounded-lg text-white flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <FiDollarSign className="text-green-400" />
+                        <span className="text-sm">Entry Cost</span>
+                      </div>
+                      <span className="text-lg font-bold text-green-400">
+                        ${cost}
+                      </span>
                     </div>
                   </div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-bold text-gray-800">
-                      {formattedWeight.toFixed(2)}
-                    </span>
-                    <span className="text-gray-600">KGs</span>
-                  </div>
-                </div>
+                )}
               </div>
-            </div>
-          )}
+            );
+          })}
+        </div>
 
-          {/* Shipping Information */}
-          <div className="p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                <FiTruck className="w-5 h-5 text-gray-600" />
-              </div>
-              <div>
-                <p className="font-medium text-gray-700">Shipping Details</p>
-                <p className="text-sm text-gray-500">Delivery information</p>
-              </div>
+        {/* Summary Section */}
+        <div className="mt-6 pt-4 border-t-2 border-dashed border-gray-100">
+          <div className="bg-linear-to-br from-gray-800 to-gray-900 rounded-2xl p-5 shadow-xl text-white">
+            <div className="flex items-center gap-2 mb-4 border-b border-gray-700 pb-3">
+              <FiTruck className="text-blue-400" />
+              <h3 className="font-bold">Shipment Summary</h3>
             </div>
-
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <FiTag className="w-4 h-4 text-gray-500" />
-                  <span className="text-gray-600">Tracking #</span>
-                </div>
-                <span className="font-medium text-gray-800 text-sm truncate max-w-45">
-                  {express_number}
+                <span className="text-gray-400 text-sm">Total Weight:</span>
+                <span className="font-bold text-lg">
+                  {totalWeight.toFixed(2)} KGs
                 </span>
               </div>
-
               <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <FiMapPin className="w-4 h-4 text-gray-500" />
-                  <span className="text-gray-600">CBM</span>
-                </div>
-                <span className="font-medium text-gray-800">
-                  {cbm ? `${cbm} m³` : "Not provided"}
+                <span className="text-gray-400 text-sm">Total Cost:</span>
+                <span className="font-bold text-2xl text-green-400">
+                  ${totalCost}
                 </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Cost Estimate */}
-          <div className="p-3 bg-linear-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                  <FiDollarSign className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-700">Shipping Cost</p>
-                  <p className="text-sm text-gray-500">
-                    Estimated delivery cost
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-2xl font-bold text-blue-600">
-                  ${shippingCost}
-                </p>
-                <p className="text-xs text-gray-500">USD</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="px-5 py-4 bg-gray-50 border-t border-gray-200">
-        <div className="flex items-center justify-between text-sm text-gray-600">
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
-            <span>Last updated: Just now</span>
-          </div>
-          <span className="font-medium">ID: {ctn_no}</span>
-        </div>
+      <div className="px-5 py-3 bg-gray-50 text-xs text-center text-gray-400 rounded-2xl">
+        Generated: {new Date().toLocaleTimeString()}
       </div>
     </div>
   );

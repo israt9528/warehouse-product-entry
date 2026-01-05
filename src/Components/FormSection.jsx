@@ -1,40 +1,26 @@
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
 import { IoIosAddCircle, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-
 import DropdownWithSearch from "./DropdownWithSearch";
-
 import { HiArrowPath } from "react-icons/hi2";
-
 import { FaLocationArrow, FaTrash } from "react-icons/fa";
-
 import { TiArrowSync } from "react-icons/ti";
-
 import toast from "react-hot-toast";
 
 const FormSection = () => {
   const [ctnNo, setCtnNo] = useState("");
 
-  const [shipment, setShipment] = useState(""); // Add shipment state
+  const [shipment, setShipment] = useState("");
 
   const [customerSections, setCustomerSections] = useState([
     {
       id: 1,
-
       customerName: "",
-
       chineseName: "",
-
       goodsName: "",
-
       goodsQuantity: "",
-
       weight: "",
-
       expressNumber: "",
-
       crm: "",
-
       isExpanded: true,
     },
   ]);
@@ -47,55 +33,36 @@ const FormSection = () => {
 
   const [ctnOptions, setCtnOptions] = useState([
     "SKH 506",
-
     "SKH 507",
-
     "SKH 508",
-
     "SKH 509",
-
     "SKH 510",
-
     "SKH 511",
-
     "SKH 512",
-
     "SKH 513",
-
     "SKH 514",
-
     "SKH 515",
   ]);
 
   const [shipmentOptions, setShipmentOptions] = useState([
     "Shipment 1",
-
     "Shipment 2",
-
     "Shipment 3",
-
     "Shipment 4",
-
     "Shipment 5",
   ]);
 
   const [customerOptions, setCustomerOptions] = useState([
     "PURPLE WAVE",
-
     "ADNAN ROOMY",
-
     "ABDUI KADER",
-
     "ISRAT ENAMUL",
-
     "SLS OVI",
-
     "SRI COLLINS",
   ]);
 
   const handleAddNewItem = (type) => {
     setModalType(type);
-
     setIsAddModalOpen(true);
   };
 
@@ -149,31 +116,21 @@ const FormSection = () => {
   const addCustomerSection = () => {
     const newId = Math.max(...customerSections.map((s) => s.id), 0) + 1;
 
-    setCustomerSections([
-      ...customerSections,
-
+    setCustomerSections((prevSections) => [
+      ...prevSections.map((section) => ({ ...section, isExpanded: false })),
       {
         id: newId,
-
         customerName: "",
-
         chineseName: "",
-
         goodsName: "",
-
         goodsQuantity: "",
-
         weight: "",
-
         expressNumber: "",
-
         crm: "",
-
         isExpanded: true,
       },
     ]);
   };
-
   const removeCustomerSection = (sectionId) => {
     if (customerSections.length > 1) {
       setCustomerSections((sections) =>
@@ -190,21 +147,13 @@ const FormSection = () => {
     setCustomerSections([
       {
         id: 1,
-
         customerName: "",
-
         chineseName: "",
-
         goodsName: "",
-
         goodsQuantity: "",
-
         weight: "",
-
         expressNumber: "",
-
         crm: "",
-
         isExpanded: true,
       },
     ]);
@@ -215,13 +164,11 @@ const FormSection = () => {
 
     if (!shipment.trim()) {
       toast.error("Please select or enter a Shipment.");
-
       return;
     }
 
     if (!ctnNo.trim()) {
       toast.error("Please select or enter a CTN No.");
-
       return;
     }
 
@@ -233,26 +180,37 @@ const FormSection = () => {
       toast.error(
         "Please fill in at least one customer entry with Customer Name and Goods Name."
       );
-
       return;
     }
 
     const submissionData = {
       shipment,
-
       ctnNo,
+      customerEntries: customerSections.map((section, index) => {
+        const { isExpanded: _isExpanded, id: _id, ...cleanData } = section;
 
-      customerEntries: customerSections.map(({ ...rest }) => rest),
+        return {
+          id: index + 1,
+          ...cleanData,
+        };
+      }),
     };
-
     console.log("Form submitted:", submissionData);
-
     toast.success(
       `Form submitted successfully!\nShipment: ${shipment}\nCTN No: ${ctnNo}\nCustomer Entries: ${customerSections.length}`
     );
-
     resetForm();
   };
+
+  // Inside FormSection component
+  useEffect(() => {
+    if (customerSections.length > 1) {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [customerSections.length]);
 
   return (
     <div>
@@ -261,7 +219,7 @@ const FormSection = () => {
       {isAddModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-linear-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-300">
-            <div className="bg-linear-to-r from-purple-500 to-blue-500 p-6 text-white">
+            <div className="bg-linear-to-r from-purple-500 to-blue-500 p-6 text-white rounded-t-2xl">
               <h3 className="text-2xl font-bold">
                 Add New{" "}
                 {modalType === "ctn"
@@ -296,7 +254,7 @@ const FormSection = () => {
                       ? "shipment name"
                       : "customer name"
                   }`}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+                  className="w-full text-black px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
                   autoFocus
                 />
               </div>
@@ -334,8 +292,6 @@ const FormSection = () => {
 
       <form className="text-black" onSubmit={handleSubmit}>
         <div className="p-6 md:p-8 space-y-6">
-          {/* Form Header */}
-
           {/* Shipment field */}
 
           <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-5 border border-blue-200">
@@ -428,11 +384,16 @@ const FormSection = () => {
               {/* Collapsible content */}
 
               <div
-                className={`transition-all duration-200 ease-in-out ${
+                className={`transition-all duration-300 ease-in-out ${
                   section.isExpanded
-                    ? "max-h-500 opacity-100 p-5 md:p-6"
-                    : "max-h-0 opacity-0 overflow-hidden"
+                    ? "opacity-100 p-5 md:p-6 visible overflow-visible"
+                    : "max-h-0 opacity-0 overflow-hidden invisible"
                 }`}
+                style={
+                  section.isExpanded
+                    ? { maxHeight: "none", overflow: "visible" }
+                    : {}
+                }
               >
                 <div className="space-y-6">
                   {/* Customer Name Field */}
@@ -461,48 +422,30 @@ const FormSection = () => {
                     {[
                       {
                         label: "Chinese name",
-
                         field: "chineseName",
-
                         type: "text",
                       },
-
                       { label: "Goods name", field: "goodsName", type: "text" },
-
                       {
                         label: "Goods Quantity",
-
                         field: "goodsQuantity",
-
                         type: "number",
                       },
-
                       {
                         label: "Weight (KGs)",
-
                         field: "weight",
-
                         type: "number",
-
                         step: "0.01",
                       },
-
                       {
                         label: "Express Number",
-
                         field: "expressNumber",
-
                         type: "text",
                       },
-
                       {
                         label: "CBM",
-
                         field: "crm",
-
-                        type: "number",
-
-                        step: "0.001",
+                        type: "text",
                       },
                     ].map((fieldConfig, idx) => (
                       <div key={idx} className="group">

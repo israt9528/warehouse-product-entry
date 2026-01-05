@@ -70,7 +70,7 @@ const App = () => {
                       <FiHome className="h-5 w-5" />
                       <div>
                         <p className="text-sm opacity-90">Warehouse</p>
-                        <p className="text-xl font-bold">Main</p>
+                        {/* <p className="text-xl font-bold">Main</p> */}
                       </div>
                     </div>
                   </div>
@@ -94,8 +94,6 @@ const App = () => {
           {/* Left Panel - Form */}
           <div className="lg:col-span-2">
             <div className="bg-linear-to-r from-[#008594] via-[#3b82f6] to-[#8b5cf6] rounded-t-2xl p-6 text-white shadow-lg relative overflow-hidden">
-              <div className="absolute inset-0 bg-linear-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20"></div>
-
               <div className="relative z-10">
                 <div className="flex items-center justify-between">
                   <div>
@@ -119,7 +117,7 @@ const App = () => {
           {/* Right Panel - Preview */}
           <div className="lg:col-span-1">
             <div className="sticky top-8">
-              <div className="bg-white rounded-b-2xl rounded-tl-2xl shadow-2xl overflow-hidden border border-gray-200">
+              <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
                 <PreviewSection productInfo={productInfo} />
               </div>
             </div>
