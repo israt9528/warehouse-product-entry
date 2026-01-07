@@ -158,7 +158,7 @@ const FormSection = ({
         const extraCust = allCustomerDetails.find(
           (c) => c.name === section.customerName
         );
-        const { isExpanded, id, ...cleanData } = section;
+        const { isExpanded: _isExpanded, id: _id, ...cleanData } = section;
         return { id: index + 1, ...cleanData, customerMeta: extraCust || null };
       }),
     };

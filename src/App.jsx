@@ -49,6 +49,7 @@ const App = () => {
   useEffect(() => {
     setProductInfo({ shipment, ctnNo, customerEntries: customerSections });
   }, [shipment, ctnNo, customerSections]);
+
   useEffect(() => {
     fetch("/demoData.json")
       .then((res) => {
