@@ -413,7 +413,7 @@ const FormSection = ({
               <div
                 className={`transition-all duration-300 ease-in-out ${
                   section.isExpanded
-                    ? "opacity-100 p-5 md:p-6 visible"
+                    ? "opacity-100 p-4 md:p-3 visible"
                     : "max-h-0 opacity-0 invisible overflow-hidden"
                 }`}
                 style={section.isExpanded ? { maxHeight: "none" } : {}}

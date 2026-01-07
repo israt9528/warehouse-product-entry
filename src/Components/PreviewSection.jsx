@@ -176,7 +176,7 @@ const PreviewSection = ({
         )}
 
       {/* Main Preview Content */}
-      <div className="bg-linear-to-r from-[#008594] via-[#0d9c90] to-[#10b981] px-4 py-1 text-white rounded-t-2xl">
+      <div className="bg-linear-to-r from-[#008594] via-[#0d9c90] to-[#10b981] px-4 py-2 text-white rounded-t-2xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-white/20 flex items-center justify-center">
@@ -193,7 +193,7 @@ const PreviewSection = ({
 
       <div className="p-3 space-y-4 text-black">
         <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-100 group relative">
+          <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-100 group relative h-22">
             <button
               onClick={() =>
                 handleEditClick("shipment", "Shipment No", productInfo.shipment)
@@ -213,7 +213,7 @@ const PreviewSection = ({
             </p>
           </div>
 
-          <div className="p-3 bg-blue-50 rounded-lg border border-blue-100 group relative">
+          <div className="p-3 bg-blue-50 rounded-lg border border-blue-100 group relative h-22">
             <button
               onClick={() =>
                 handleEditClick("shipment", "CTN No", productInfo.ctnNo)
