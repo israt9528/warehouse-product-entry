@@ -29,7 +29,6 @@ const FormSection = ({
     shipmentType: "",
     description: "",
     status: "",
-    entryBy: "",
     updatedBy: "",
     name: "",
     mobile: "",
@@ -70,7 +69,6 @@ const FormSection = ({
       shipmentType: "",
       description: "",
       status: "",
-      entryBy: "",
       updatedBy: "",
       name: "",
       mobile: "",
@@ -210,10 +208,10 @@ const FormSection = ({
                       })
                     }
                   />
-                  <input
-                    type="text"
-                    placeholder="Shipment Type"
-                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
+
+                  {/* Shipment Type Dropdown */}
+                  <select
+                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all bg-white"
                     value={newItemData.shipmentType}
                     onChange={(e) =>
                       setNewItemData({
@@ -221,7 +219,15 @@ const FormSection = ({
                         shipmentType: e.target.value,
                       })
                     }
-                  />
+                  >
+                    <option value="" disabled>
+                      Select Shipment Type
+                    </option>
+                    <option value="By Air">BY AIR</option>
+                    <option value="By Ship">BY SHiP</option>
+                    <option value="By Road">BY ROAD</option>
+                  </select>
+
                   <textarea
                     placeholder="Description"
                     className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
@@ -233,41 +239,27 @@ const FormSection = ({
                       })
                     }
                   />
-                  <input
-                    type="text"
-                    placeholder="Status"
-                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
+
+                  {/* Status Dropdown */}
+                  <select
+                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all bg-white"
                     value={newItemData.status}
                     onChange={(e) =>
-                      setNewItemData({ ...newItemData, status: e.target.value })
+                      setNewItemData({
+                        ...newItemData,
+                        status: e.target.value,
+                      })
                     }
-                  />
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Entry By"
-                      className="w-1/2 text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
-                      value={newItemData.entryBy}
-                      onChange={(e) =>
-                        setNewItemData({
-                          ...newItemData,
-                          entryBy: e.target.value,
-                        })
-                      }
-                    />
-                    <input
-                      type="text"
-                      placeholder="Updated By"
-                      className="w-1/2 text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
-                      value={newItemData.updatedBy}
-                      onChange={(e) =>
-                        setNewItemData({
-                          ...newItemData,
-                          updatedBy: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
+                  >
+                    <option value="" disabled>
+                      Select Status
+                    </option>
+                    <option value="CHINA WAREHOUSE">CHINA WAREHOUSE</option>
+                    <option value="BD WAREHOUSE">BD WAREHOUSE</option>
+                    <option value="ON AIR">ON AIR</option>
+                    <option value="ON ROAD">ON ROAD</option>
+                    <option value="ON SHIP">ON SHIP</option>
+                  </select>
                 </>
               )}
               {modalType === "customer" && (
