@@ -75,11 +75,11 @@ const App = () => {
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex-1">
                   <div className="flex items-center gap-4 mb-3">
-                    <div className="h-14 w-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                    <div className="h-14 w-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-2 shadow-lg">
                       <FiPackage className="h-7 w-7" />
                     </div>
                     <div>
-                      <h1 className="text-3xl md:text-4xl font-bold bg-linear-to-r from-white to-cyan-100 bg-clip-text text-transparent">
+                      <h1 className="text-3xl md:text-4xl font-bold bg-linear-to-r from-white to-cyan-200 bg-clip-text text-transparent mb-0">
                         Warehouse Product Entry
                       </h1>
                       <p className="text-cyan-100 mt-2 text-lg">
@@ -93,22 +93,26 @@ const App = () => {
                     <div className="flex items-center gap-3 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-xl">
                       <FiUsers className="h-5 w-5" />
                       <div>
-                        <p className="text-sm opacity-90">Active Entries</p>
-                        <p className="text-xl font-bold">
-                          {productInfo.length}
+                        <p className="text-sm opacity-90 mt-3">
+                          Active Entries
                         </p>
+                        {/* <p className="text-xl font-bold">
+                          {productInfo.length}
+                        </p> */}
                       </div>
                     </div>
                     <div className="flex items-center gap-3 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-xl">
                       <FiTrendingUp className="h-5 w-5" />
                       <div>
-                        <p className="text-sm opacity-90">Total Submissions</p>
+                        <p className="text-sm opacity-90 mt-3">
+                          Total Submissions
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-xl">
                       <FiHome className="h-5 w-5" />
                       <div>
-                        <p className="text-sm opacity-90">Warehouse</p>
+                        <p className="text-sm opacity-90 mt-3">Warehouse</p>
                         {/* <p className="text-xl font-bold">Main</p> */}
                       </div>
                     </div>
@@ -116,11 +120,11 @@ const App = () => {
                 </div>
 
                 {/* Status Badge */}
-                <div className="flex items-center gap-3 bg-linear-to-r from-emerald-500/30 to-cyan-500/30 backdrop-blur-sm px-5 py-3 rounded-2xl border border-white/20">
-                  <div className="h-3 w-3 rounded-full bg-cyan-300 animate-pulse"></div>
+                <div className="flex  gap-3 bg-linear-to-r from-emerald-500/30 to-cyan-500/30 backdrop-blur-sm px-5 py-3 rounded-2xl border border-white/5">
+                  <div className="h-3 w-3 mt-3 rounded-full bg-cyan-300 animate-pulse"></div>
                   <div className="text-center">
-                    <p className="text-sm opacity-90">System Status</p>
-                    <p className="text-xl font-bold">Operational</p>
+                    <p className="text-sm opacity-90 mb-0">System Status</p>
+                    <p className="text-lg font-bold mb-0">Operational</p>
                   </div>
                 </div>
               </div>
@@ -132,12 +136,14 @@ const App = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Panel - Form */}
           <div className="lg:col-span-2">
-            <div className="bg-linear-to-r from-[#008594] via-[#3b82f6] to-[#8b5cf6] rounded-t-2xl p-6 text-white shadow-lg relative overflow-hidden">
+            <div className="bg-linear-to-r from-[#008594] via-[#3b82f6] to-[#8b5cf6] rounded-t-2xl p-6 text-white relative overflow-hidden">
               <div className="relative z-10">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-2xl font-bold">Product Entry Form</h2>
-                    <p className="text-blue-100">
+                    <h2 className="text-2xl font-bold mb-0">
+                      Product Entry Form
+                    </h2>
+                    <p className="text-blue-100 mb-0">
                       Enter warehouse product details
                     </p>
                   </div>

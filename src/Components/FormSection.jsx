@@ -334,8 +334,8 @@ const FormSection = ({
       )}
 
       <form className="text-black" onSubmit={handleSubmit}>
-        <div className="p-6 md:p-8 space-y-6">
-          <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-5 border border-blue-200">
+        <div className="p-4 md:p-6 space-y-6">
+          <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-200">
             <DropdownWithSearch
               label="Shipment"
               apiEndpoint="/invi/index.php/client/ajax_clientDropdown" // Add your actual API URL here
@@ -348,7 +348,7 @@ const FormSection = ({
             />
           </div>
 
-          <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-5 border border-blue-200">
+          <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-200">
             <DropdownWithSearch
               label="CTN No"
               options={ctnOptions}
@@ -364,23 +364,23 @@ const FormSection = ({
           {customerSections.map((section, index) => (
             <div
               key={section.id}
-              className="bg-linear-to-br from-white to-blue-50 rounded-2xl shadow-lg border-2 border-blue-100 overflow-hidden transition-all duration-300 hover:border-purple-200"
+              className="bg-linear-to-br from-white to-blue-50 rounded-2xl border-2 border-blue-100 overflow-hidden transition-all duration-300 hover:border-purple-200"
             >
-              <div className="flex justify-between items-center p-5 md:p-6 rounded-t-2xl border-b border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
+              <div className="flex justify-between items-center p-4 md:p-6 rounded-t-2xl border-b border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => toggleSectionCollapse(section.id)}
                     className="flex items-center gap-3 text-gray-800 hover:text-purple-600 transition-colors"
                   >
-                    <div className="h-10 w-10 rounded-lg bg-linear-to-r from-purple-500 to-blue-500 flex items-center justify-center shadow-md">
+                    <div className="h-8 w-8 rounded-lg bg-linear-to-r from-purple-500 to-blue-500 flex items-center justify-center shadow-md">
                       <span className="text-white font-bold">{index + 1}</span>
                     </div>
                     <div className="text-left">
-                      <h4 className="text-xl font-bold">
+                      <h4 className="text-[20px] font-bold mb-0">
                         Customer Entry #{index + 1}
                       </h4>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 mb-0">
                         Click to {section.isExpanded ? "collapse" : "expand"}
                       </p>
                     </div>
@@ -390,7 +390,7 @@ const FormSection = ({
                   <button
                     type="button"
                     onClick={() => toggleSectionCollapse(section.id)}
-                    className="px-4 py-2 bg-linear-to-r from-blue-500 to-purple-500 text-white rounded-lg shadow-md"
+                    className="px-3 py-2 bg-linear-to-r from-blue-500 to-purple-500 text-white rounded-lg shadow-md"
                   >
                     {section.isExpanded ? (
                       <IoIosArrowUp className="h-4 w-4" />
@@ -402,7 +402,7 @@ const FormSection = ({
                     <button
                       type="button"
                       onClick={() => removeCustomerSection(section.id)}
-                      className="px-4 py-2 bg-linear-to-r from-red-500 to-pink-500 text-white rounded-lg shadow-md"
+                      className="px-3 py-2 bg-linear-to-r from-red-500 to-pink-500 text-white rounded-lg shadow-md"
                     >
                       <FaTrash className="h-4 w-4" />
                     </button>
@@ -419,7 +419,7 @@ const FormSection = ({
                 style={section.isExpanded ? { maxHeight: "none" } : {}}
               >
                 <div className="space-y-6">
-                  <div className="bg-linear-to-r from-purple-50 to-blue-50 rounded-xl p-5 border border-purple-100">
+                  <div className="bg-linear-to-r from-purple-50 to-blue-50 rounded-xl p-4 border border-purple-100">
                     <DropdownWithSearch
                       label="Customer Name"
                       options={customerOptions}
@@ -517,18 +517,18 @@ const FormSection = ({
             </div>
           ))}
 
-          <div className="bg-linear-to-r from-blue-100 to-purple-100 rounded-2xl p-6 border border-blue-200">
+          <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-2xl p-6 border border-blue-200">
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 type="submit"
-                className="flex-1 flex justify-center items-center gap-2 px-6 py-4 bg-linear-to-r from-[#008594] via-[#38b2ac] to-[#0ceded] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
+                className="flex-1 flex justify-center items-center gap-2 px-6 py-3 bg-linear-to-r from-[#008594] via-[#38b2ac] to-[#0ceded] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
               >
                 <FaLocationArrow /> Submit All Entries
               </button>
               <button
                 type="button"
                 onClick={addCustomerSection}
-                className="flex-1 flex items-center justify-center gap-3 px-6 py-3 bg-linear-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
               >
                 <div className="h-8 w-8 rounded-lg bg-white/20 flex items-center justify-center">
                   <IoIosAddCircle className="h-5 w-5" />

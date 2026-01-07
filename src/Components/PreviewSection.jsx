@@ -280,15 +280,15 @@ const PreviewSection = ({
                 </div>
 
                 {isExpanded && (
-                  <div className="p-4 bg-white space-y-4 border-t border-gray-100 animate-in fade-in slide-in-from-top-2">
-                    <div className="flex items-start justify-between p-3 bg-pink-50 rounded-lg group">
-                      <div className="flex items-start gap-3">
-                        <FiBox className="text-pink-500 mt-1" />
+                  <div className="p-3 bg-white space-y-4 border-t border-gray-100 animate-in fade-in slide-in-from-top-2">
+                    <div className="flex items-start justify-between p-3 bg-pink-50 rounded-lg group h-22">
+                      <div className="flex items-start gap-2">
+                        <FiBox className="text-pink-500" />
                         <div>
-                          <p className="text-xs text-gray-500 uppercase">
+                          <p className="text-xs text-gray-500 uppercase mb-0">
                             Goods Name
                           </p>
-                          <p className="font-bold text-gray-800">
+                          <p className="font-bold text-gray-800 mb-0">
                             {customer.goodsName || "N/A"}
                           </p>
                           <p className="text-sm text-gray-600 italic">
@@ -298,8 +298,8 @@ const PreviewSection = ({
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="p-3 bg-green-50 rounded-lg relative group">
-                        <div className="flex items-center gap-2 mb-1">
+                      <div className="p-3 bg-green-50 rounded-lg relative group h-26">
+                        <div className="flex gap-2">
                           <FiShoppingCart className="text-green-600 text-sm" />
                           <p className="text-xs text-green-600 uppercase font-medium">
                             Quantity
@@ -310,8 +310,8 @@ const PreviewSection = ({
                           <span className="text-xs font-normal">PCS</span>
                         </p>
                       </div>
-                      <div className="p-3 bg-amber-50 rounded-lg relative group">
-                        <div className="flex items-center gap-2 mb-1">
+                      <div className="p-3 bg-amber-50 rounded-lg relative group h-26">
+                        <div className="flex gap-2">
                           <FiBarChart className="text-amber-600 text-sm" />
                           <p className="text-xs text-amber-600 uppercase font-medium">
                             Weight
@@ -341,12 +341,12 @@ const PreviewSection = ({
 
         {/* Summary Section */}
 
-        <div className="mt-6 pt-4 border-t-2 border-dashed border-gray-100">
-          <div className="bg-linear-to-br from-gray-800 to-gray-900 rounded-2xl p-5 shadow-xl text-white">
+        <div className="mt-6  border-t-2 border-dashed border-gray-100">
+          <div className="bg-linear-to-br from-gray-800 to-gray-900 rounded-2xl p-4 shadow-xl text-white">
             <div className="flex items-center gap-2 mb-4 border-b border-gray-700 pb-3">
-              <FiTruck className="text-blue-400" />
+              <FiTruck className="text-blue-400 mb-2" />
 
-              <h3 className="font-bold">Shipment Summary</h3>
+              <h3 className="font-bold text-lg">Shipment Summary</h3>
             </div>
 
             <div className="space-y-3">
