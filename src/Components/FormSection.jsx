@@ -30,6 +30,7 @@ const FormSection = ({
     description: "",
     status: "",
     updatedBy: "",
+    entryBy: "",
     name: "",
     mobile: "",
     address: "",
@@ -70,6 +71,7 @@ const FormSection = ({
       description: "",
       status: "",
       updatedBy: "",
+      entryBy: "",
       name: "",
       mobile: "",
       address: "",
@@ -164,7 +166,7 @@ const FormSection = ({
     };
 
     console.log("Submission Data:", submissionData);
-    toast.success("Form submitted! Full data logged to console.");
+    toast.success("Form submitted!");
     resetForm();
   };
 

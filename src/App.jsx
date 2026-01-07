@@ -45,10 +45,9 @@ const App = () => {
     "ABDUI KADER",
   ]);
 
-  // Sync productInfo for Preview
-  useEffect(() => {
-    setProductInfo({ shipment, ctnNo, customerEntries: customerSections });
-  }, [shipment, ctnNo, customerSections]);
+  // useEffect(() => {
+  //   setProductInfo({ shipment, ctnNo, customerEntries: customerSections });
+  // }, [shipment, ctnNo, customerSections]);
 
   useEffect(() => {
     fetch("/demoData.json")
@@ -63,7 +62,7 @@ const App = () => {
       })
       .catch((err) => console.error(err));
   }, []);
-  console.log(productInfo);
+  // console.log(productInfo);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-purple-50 p-4 md:p-8">
