@@ -124,6 +124,7 @@ const PreviewSection = ({
                         setEditData({ ...editData, value: val })
                       }
                       placeholder="Select CTN"
+                      apiEndpoint="/api/shipments"
                     />
                   )}
                   {editData.field === "Customer Name" && (

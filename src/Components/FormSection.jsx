@@ -357,6 +357,7 @@ const FormSection = ({
               placeholder="Select CTN"
               isRequired
               onAddNew={() => handleAddNewItem("ctn")}
+              apiEndpoint="/api/shipments"
             />
           </div>
 
