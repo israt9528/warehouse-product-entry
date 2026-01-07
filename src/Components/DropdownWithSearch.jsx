@@ -10,12 +10,13 @@ import { IoIosAddCircle } from "react-icons/io";
 
 const DropdownWithSearch = ({
   label,
-  options,
+  options, // Keep this for fallback or initial sync
   value,
   onChange,
   placeholder,
   isRequired = false,
   onAddNew,
+  apiEndpoint, // New prop for AJAX
 }) => {
   const selectRef = useRef(null);
 
@@ -30,12 +31,30 @@ const DropdownWithSearch = ({
       placeholder: placeholder,
       allowClear: true,
       width: "100%",
-      // ATTACH TO BODY: This is the gold standard for fixing z-index/cut-off issues
       dropdownParent: $(document.body),
-      minimumResultsForSearch: 0,
+      ajax: apiEndpoint
+        ? {
+            url: apiEndpoint,
+            dataType: "json",
+            delay: 250,
+            data: (params) => ({
+              q: params.term,
+              page: params.page,
+            }),
+            processResults: (data) => {
+              // Map your API response here
+              return {
+                results: data.map((item) => ({
+                  id: item.name || item.id,
+                  text: item.name || item.text,
+                })),
+              };
+            },
+            cache: true,
+          }
+        : null,
     });
 
-    // Use select2 specific events for React state updates
     $select.on("change", (e) => {
       onChange($select.val());
     });
@@ -45,7 +64,7 @@ const DropdownWithSearch = ({
         $select.select2("destroy");
       }
     };
-  }, [options]);
+  }, [apiEndpoint, onChange, placeholder]); // Re-init if endpoint changes
 
   // Sync state changes
 

@@ -112,6 +112,7 @@ const PreviewSection = ({
                         setEditData({ ...editData, value: val })
                       }
                       placeholder="Select Shipment"
+                      apiEndpoint="/api/shipments"
                     />
                   )}
                   {editData.field === "CTN No" && (
@@ -134,6 +135,7 @@ const PreviewSection = ({
                         setEditData({ ...editData, value: val })
                       }
                       placeholder="Select Customer"
+                      apiEndpoint="/api/shipments"
                     />
                   )}
                   {/* Default for fields that don't need dropdowns */}

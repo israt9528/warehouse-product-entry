@@ -338,12 +338,13 @@ const FormSection = ({
           <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-5 border border-blue-200">
             <DropdownWithSearch
               label="Shipment"
-              options={shipmentOptions}
+              apiEndpoint="/api/shipments" // Add your actual API URL here
               value={shipment}
               onChange={setShipment}
               placeholder="Select shipment"
               isRequired
               onAddNew={() => handleAddNewItem("shipment")}
+              options={shipmentOptions}
             />
           </div>
 
@@ -432,6 +433,7 @@ const FormSection = ({
                       placeholder="Select customer"
                       isRequired={true}
                       onAddNew={() => handleAddNewItem("customer")}
+                      apiEndpoint="/api/shipments"
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

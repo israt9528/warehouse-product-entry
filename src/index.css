@@ -195,3 +195,9 @@ div[style*="max-height: 500"] {
 .select2-container--open {
     z-index: 10000000 !important; 
 }
+
+.select2-container--default .select2-selection--single {
+    height: 42px !important;
+    border: 2px solid #d1d5db !important; /* Matches your gray-300 */
+    border-radius: 0.75rem !important; /* Matches your rounded-xl */
+}

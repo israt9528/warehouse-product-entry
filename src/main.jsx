@@ -2,7 +2,6 @@ import $ from "jquery";
 
 window.$ = window.jQuery = $;
 
-// ✅ ONLY full build
 import "select2/dist/js/select2.full.js";
 import "select2/dist/css/select2.min.css";
 
