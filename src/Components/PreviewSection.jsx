@@ -94,7 +94,7 @@ const PreviewSection = ({
       {/* Edit Modal using Portal */}
       {isEditModalOpen &&
         createPortal(
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999999] p-4">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-9999999 p-4">
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-300 text-black">
               <div className="bg-linear-to-r from-emerald-600 to-green-500 p-6 text-white rounded-t-2xl">
                 <h3 className="text-2xl font-bold flex items-center gap-2">
@@ -176,14 +176,14 @@ const PreviewSection = ({
         )}
 
       {/* Main Preview Content */}
-      <div className="bg-linear-to-r from-[#008594] via-[#0d9c90] to-[#10b981] p-5 text-white rounded-t-2xl">
+      <div className="bg-linear-to-r from-[#008594] via-[#0d9c90] to-[#10b981] px-4 py-1 text-white rounded-t-2xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-white/20 flex items-center justify-center">
               <FiPackage className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-xl font-bold">Product Preview</h2>
+              <h2 className="mb-0 text-lg mt-2 font-bold">Product Preview</h2>
               <p className="text-sm opacity-90">Real-time overview</p>
             </div>
           </div>
@@ -191,7 +191,7 @@ const PreviewSection = ({
         </div>
       </div>
 
-      <div className="p-5 space-y-4 text-black">
+      <div className="p-3 space-y-4 text-black">
         <div className="grid grid-cols-2 gap-3">
           <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-100 group relative">
             <button
@@ -202,13 +202,13 @@ const PreviewSection = ({
             >
               <FiEdit2 size={12} />
             </button>
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex gap-2">
               <PiShippingContainer className="text-emerald-600" />
               <p className="text-xs text-emerald-600 font-bold uppercase">
                 Shipment
               </p>
             </div>
-            <p className="font-bold text-gray-800">
+            <p className="font-bold text-gray-800 mb-0">
               {productInfo.shipment || "Not selected"}
             </p>
           </div>
@@ -222,7 +222,7 @@ const PreviewSection = ({
             >
               <FiEdit2 size={12} />
             </button>
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex gap-2">
               <FiHash className="text-blue-600" />
               <p className="text-xs text-blue-600 font-bold uppercase">
                 CTN No

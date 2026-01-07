@@ -10,7 +10,7 @@ import { IoIosAddCircle } from "react-icons/io";
 
 const DropdownWithSearch = ({
   label,
-  options, // Keep this for fallback or initial sync
+  options,
   value,
   onChange,
   placeholder,
@@ -64,7 +64,7 @@ const DropdownWithSearch = ({
         $select.select2("destroy");
       }
     };
-  }, [apiEndpoint, onChange, placeholder]); // Re-init if endpoint changes
+  }, [apiEndpoint, onChange, placeholder]);
 
   // Sync state changes
 
@@ -96,7 +96,7 @@ const DropdownWithSearch = ({
         )}
       </div>
 
-      <div className="select2-wrapper text-black">
+      <div className="select2-wrapper-custom text-black">
         <select ref={selectRef} className="w-full">
           <option></option>
 

@@ -338,7 +338,7 @@ const FormSection = ({
           <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-5 border border-blue-200">
             <DropdownWithSearch
               label="Shipment"
-              apiEndpoint="/api/shipments" // Add your actual API URL here
+              apiEndpoint="/invi/index.php/client/ajax_clientDropdown" // Add your actual API URL here
               value={shipment}
               onChange={setShipment}
               placeholder="Select shipment"

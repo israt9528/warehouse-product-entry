@@ -1,9 +1,34 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+/* 1. Wrap AdminLTE in a base layer to lower its priority */
+@layer base {
+    @import "./adminlte.min.css";
 
+    .select2-container *, .select2-container *:before, .select2-container *:after {
+        box-sizing: border-box !important;
+    }
 
-/* 1. Main Container Box */
+    /* Essential reset to stop AdminLTE from forcing styles on Select2's hidden logic */
+    select.select2-hidden-accessible {
+        border: 0 !important;
+        clip: rect(0 0 0 0) !important;
+        height: 1px !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+        position: absolute !important;
+        width: 1px !important;
+    }
+}
+
+/* 2. Your Original Design (Priority Section) */
+
+.admin-lte-fix {
+    overflow: visible !important;
+}
+
+/* Main Container Box */
 .select2-container--default .select2-selection--single {
     height: 48px !important; /* h-12 equivalent */
     display: flex !important;
@@ -13,30 +38,31 @@
     background-color: white !important;
     transition: all 0.2s;
     outline: none !important;
+    padding: 0 !important; /* Forces reset of AdminLTE padding */
 }
 
-/* 2. Fix the Placeholder and Selected Text position */
+/* Fix the Placeholder and Selected Text position */
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: #1f2937 !important; /* gray-800 */
     padding-left: 1rem !important;
     padding-right: 2rem !important;
-    line-height: normal !important;
+    line-height: 44px !important; /* Vertical center adjustment */
     margin-top: 0 !important;
     width: 100% !important;
 }
 
-/* 3. Placeholder Color */
+/* Placeholder Color */
 .select2-container--default .select2-selection--single .select2-selection__placeholder {
     color: #9ca3af !important; /* gray-400 */
 }
 
-/* 4. Focus State (Purple border) */
+/* Focus State (Purple border) */
 .select2-container--focus .select2-selection--single {
     border-color: #a855f7 !important; /* purple-500 */
     box-shadow: 0 0 0 2px #e9d5ff !important; /* purple-200 ring */
 }
 
-/* 5. Fix the Arrow Position */
+/* Fix the Arrow Position */
 .select2-container--default .select2-selection--single .select2-selection__arrow {
     height: 46px !important;
     top: 0 !important;
@@ -45,7 +71,7 @@
     align-items: center !important;
 }
 
-/* 6. Dropdown List Styling */
+/* Dropdown List Styling */
 .select2-dropdown {
     border: 1px solid #e5e7eb !important;
     border-radius: 0.75rem !important;
@@ -55,14 +81,15 @@
     background-color: white !important;
 }
 
-/* 7. Search box inside dropdown */
+/* Search box inside dropdown */
 .select2-search--dropdown .select2-search__field {
     border-radius: 0.5rem !important;
     border: 1px solid #d1d5db !important;
     padding: 6px 10px !important;
+    color: #000000 !important;
 }
 
-/* 8. Highlighted item in list */
+/* Highlighted item in list */
 .select2-results__option--highlighted[aria-selected] {
     background-color: #a855f7 !important; /* purple-500 */
 }
@@ -74,7 +101,7 @@
 
 /* Ensure Select2 dropdown is ALWAYS on top of cards and modals */
 .select2-container--open {
-    z-index: 9999999 !important;
+    z-index: 10000000 !important;
 }
 
 /* Force the search bar to be visible and have a dark text color */
@@ -84,37 +111,27 @@
     background: white !important;
 }
 
-.select2-search--dropdown .select2-search__field {
-    color: #000000 !important;
-    border: 1px solid #d1d5db !important;
-    outline: none !important;
-}
-
-/* Ensure the results list is visible and has a background */
+/* Results list visibility */
 .select2-results {
     background-color: white !important;
     color: black !important;
 }
 
-
-
-/* Optional: Make the "Add New" button shake slightly on hover to attract attention */
+/* Hover button animation */
 .group:hover button {
     animation: subtle-shake 0.5s ease-in-out;
 }
 
-/* 1. Prevent the card from cutting off the dropdown */
+/* Overflow fixes for cards */
 .overflow-hidden {
-    overflow: visible !important; 
+    overflow: visible !important;
 }
 
-/* If you use DaisyUI or Tailwind transition, ensure the expanded state 
-   doesn't trap the dropdown */
 div[style*="max-height: 500"] {
     overflow: visible !important;
 }
 
-/* 2. Force the Search Input to be visible and black text */
+/* Search Input force visibility */
 .select2-container--default .select2-search--dropdown .select2-search__field {
     border: 1px solid #d1d5db !important;
     border-radius: 0.5rem !important;
@@ -124,7 +141,6 @@ div[style*="max-height: 500"] {
     outline: none !important;
 }
 
-/* 3. Ensure the dropdown list is not invisible */
 .select2-results__options {
     background: white !important;
     color: black !important;
@@ -132,33 +148,21 @@ div[style*="max-height: 500"] {
 
 /* --- Z-Index & Layout Fixes --- */
 
-/* 1. The Select2 Container itself when closed */
 .select2-container {
-    z-index: 10 !important; 
+    z-index: 10 !important;
 }
 
-/* 2. When the dropdown is OPEN - Force it to the very top */
-/* .select2-container--open {
-    z-index: 9999999 !important;
-} */
-
-/* 3. The Dropdown List itself */
 .select2-dropdown {
     z-index: 9999999 !important;
     background-color: white !important;
-    /* Ensure it doesn't get shifted by parent text-align */
-    left: 0 !important; 
+    left: 0 !important;
 }
 
-/* 4. Fix the Parent "Cut-off" Issue 
-   We only want to force visibility on the container holding the dropdown
-*/
 .select2-wrapper {
     position: relative;
-    z-index: 50; /* Higher than the following form fields */
+    z-index: 50; 
 }
 
-/* This is the key: If a parent card is expanded, it MUST allow overflow */
 .customer-card-expanded {
     overflow: visible !important;
 }
@@ -169,35 +173,24 @@ div[style*="max-height: 500"] {
     75% { transform: translateX(1px); }
 }
 
-/* 1. Modals should be the highest possible thing */
+/* Modals/Portal handling */
 .fixed.inset-0[style*="z-index: 9999999"], 
 .fixed.inset-0.z-\[9999999\] {
     z-index: 9999999 !important;
 }
 
-/* 2. Select2 should be high, but LOWER than the modal */
-.select2-container--open {
-    z-index: 9999990 !important; 
-}
-
-/* 3. The backdrop blur must sit between the dropdown and the modal */
 .backdrop-blur-sm {
     z-index: 9999998 !important;
 }
 
-/* 4. Fix for Select2 search input text visibility */
 .select2-search__field {
     color: black !important;
     background: white !important;
 }
 
-/* Fix Select2 inside high z-index portals */
-.select2-container--open {
-    z-index: 10000000 !important; 
-}
-
+/* Double check for selection height */
 .select2-container--default .select2-selection--single {
-    height: 42px !important;
-    border: 2px solid #d1d5db !important; /* Matches your gray-300 */
-    border-radius: 0.75rem !important; /* Matches your rounded-xl */
+    height: 48px !important;
+    border: 2px solid #d1d5db !important; 
+    border-radius: 0.75rem !important;
 }

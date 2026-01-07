@@ -183,29 +183,6 @@ const App = () => {
             </div>
           </div>
         </div>
-
-        {/* Footer */}
-        <div className="mt-8 text-center">
-          <div className="bg-linear-to-r from-gray-100 to-gray-200 rounded-2xl p-6 border border-gray-300">
-            <p className="text-gray-600 font-medium">
-              Warehouse Management System • v2.0
-            </p>
-            <div className="flex justify-center gap-4 mt-3 text-sm text-gray-500">
-              <span className="flex items-center gap-1">
-                <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                Real-time Sync
-              </span>
-              <span className="flex items-center gap-1">
-                <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-                Secure Data
-              </span>
-              <span className="flex items-center gap-1">
-                <div className="h-2 w-2 rounded-full bg-purple-500"></div>
-                Mobile Ready
-              </span>
-            </div>
-          </div>
-        </div>
       </div>
       <Toaster position="top-right" reverseOrder={false} />
     </div>
