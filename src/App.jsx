@@ -5,9 +5,50 @@ import PreviewSection from "./Components/PreviewSection";
 import { Toaster } from "react-hot-toast";
 
 const App = () => {
-  const [productInfo, setProductInfo] = useState([]);
-  const [totalSubmissions, setTotalSubmissions] = useState(0);
+  const [productInfo, setProductInfo] = useState({
+    shipment: "",
+    ctnNo: "",
+    customerEntries: [],
+  });
+  // Lifted States
+  const [shipment, setShipment] = useState("");
+  const [ctnNo, setCtnNo] = useState("");
+  const [customerSections, setCustomerSections] = useState([
+    {
+      id: 1,
+      customerName: "",
+      chineseName: "",
+      goodsName: "",
+      goodsQuantity: "",
+      weight: "",
+      expressNumber: "",
+      cbm: "",
+      isExpanded: true,
+    },
+  ]);
 
+  const [shipmentOptions, setShipmentOptions] = useState([
+    "Shipment 1",
+    "Shipment 2",
+    "Shipment 3",
+  ]);
+  const [ctnOptions, setCtnOptions] = useState([
+    "SKH 506",
+    "SKH 507",
+    "SKH 508",
+    "SKH 509",
+    "SKH 510",
+  ]);
+  const [customerOptions, setCustomerOptions] = useState([
+    "PURPLE WAVE",
+    "ADNAN ROOMY",
+    "ABDUI KADER",
+  ]);
+
+  // Sync productInfo for Preview
+  useEffect(() => {
+    setProductInfo({ shipment, ctnNo, customerEntries: customerSections });
+  }, [shipment, ctnNo, customerSections]);
   useEffect(() => {
     fetch("/demoData.json")
       .then((res) => {
@@ -18,7 +59,6 @@ const App = () => {
       })
       .then((data) => {
         setProductInfo(data);
-        setTotalSubmissions(data.length);
       })
       .catch((err) => console.error(err));
   }, []);
@@ -63,7 +103,6 @@ const App = () => {
                       <FiTrendingUp className="h-5 w-5" />
                       <div>
                         <p className="text-sm opacity-90">Total Submissions</p>
-                        <p className="text-xl font-bold">{totalSubmissions}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-xl">
@@ -110,7 +149,20 @@ const App = () => {
               </div>
             </div>
             <div className="bg-white rounded-b-2xl shadow-2xl overflow-hidden border border-gray-200">
-              <FormSection />
+              <FormSection
+                shipment={shipment}
+                setShipment={setShipment}
+                ctnNo={ctnNo}
+                setCtnNo={setCtnNo}
+                customerSections={customerSections}
+                setCustomerSections={setCustomerSections}
+                shipmentOptions={shipmentOptions}
+                setShipmentOptions={setShipmentOptions}
+                ctnOptions={ctnOptions}
+                setCtnOptions={setCtnOptions}
+                customerOptions={customerOptions}
+                setCustomerOptions={setCustomerOptions}
+              />
             </div>
           </div>
 
@@ -118,7 +170,15 @@ const App = () => {
           <div className="lg:col-span-1">
             <div className="sticky top-8">
               <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
-                <PreviewSection productInfo={productInfo} />
+                <PreviewSection
+                  productInfo={productInfo}
+                  setShipment={setShipment}
+                  setCtnNo={setCtnNo}
+                  setCustomerSections={setCustomerSections}
+                  shipmentOptions={shipmentOptions}
+                  ctnOptions={ctnOptions}
+                  customerOptions={customerOptions}
+                />
               </div>
             </div>
           </div>

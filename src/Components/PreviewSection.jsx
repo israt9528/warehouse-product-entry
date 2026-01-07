@@ -4,24 +4,28 @@ import {
   FiPackage,
   FiUser,
   FiBox,
-  FiTag,
   FiTruck,
   FiHash,
   FiCheckCircle,
   FiShoppingCart,
   FiBarChart,
   FiDollarSign,
-  FiMapPin,
   FiChevronDown,
-  FiChevronUp,
   FiEdit2,
 } from "react-icons/fi";
 import { PiShippingContainer } from "react-icons/pi";
+import DropdownWithSearch from "./DropdownWithSearch";
 
-const PreviewSection = ({ productInfo }) => {
+const PreviewSection = ({
+  productInfo,
+  setShipment,
+  setCtnNo,
+  setCustomerSections,
+  shipmentOptions,
+  ctnOptions,
+  customerOptions,
+}) => {
   const [expandedCustomers, setExpandedCustomers] = useState({});
-
-  // Modal State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editData, setEditData] = useState({
     type: "",
@@ -40,6 +44,23 @@ const PreviewSection = ({ productInfo }) => {
   const handleEditClick = (type, field, value, id = null) => {
     setEditData({ type, field, value, id });
     setIsEditModalOpen(true);
+  };
+
+  const handleSaveEdit = () => {
+    if (editData.field === "Shipment No") {
+      setShipment(editData.value);
+    } else if (editData.field === "CTN No") {
+      setCtnNo(editData.value);
+    } else if (editData.field === "Customer Name") {
+      setCustomerSections((prev) =>
+        prev.map((section) =>
+          section.id === editData.id
+            ? { ...section, customerName: editData.value }
+            : section
+        )
+      );
+    }
+    setIsEditModalOpen(false);
   };
 
   if (
@@ -70,36 +91,77 @@ const PreviewSection = ({ productInfo }) => {
 
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden relative">
-      {/* Edit Modal */}
+      {/* Edit Modal using Portal */}
       {isEditModalOpen &&
         createPortal(
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-9999999 p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-300">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999999] p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-300 text-black">
               <div className="bg-linear-to-r from-emerald-600 to-green-500 p-6 text-white rounded-t-2xl">
                 <h3 className="text-2xl font-bold flex items-center gap-2">
                   <FiEdit2 /> Update {editData.field}
                 </h3>
               </div>
               <div className="p-6">
-                <input
-                  type="text"
-                  value={editData.value}
-                  onChange={(e) =>
-                    setEditData({ ...editData, value: e.target.value })
-                  }
-                  className="w-full text-black px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-emerald-500 outline-none"
-                  autoFocus
-                />
+                <div className="mb-4">
+                  {editData.field === "Shipment No" && (
+                    <DropdownWithSearch
+                      label="Shipment"
+                      options={shipmentOptions}
+                      value={editData.value}
+                      onChange={(val) =>
+                        setEditData({ ...editData, value: val })
+                      }
+                      placeholder="Select Shipment"
+                    />
+                  )}
+                  {editData.field === "CTN No" && (
+                    <DropdownWithSearch
+                      label="CTN No"
+                      options={ctnOptions}
+                      value={editData.value}
+                      onChange={(val) =>
+                        setEditData({ ...editData, value: val })
+                      }
+                      placeholder="Select CTN"
+                    />
+                  )}
+                  {editData.field === "Customer Name" && (
+                    <DropdownWithSearch
+                      label="Customer Name"
+                      options={customerOptions}
+                      value={editData.value}
+                      onChange={(val) =>
+                        setEditData({ ...editData, value: val })
+                      }
+                      placeholder="Select Customer"
+                    />
+                  )}
+                  {/* Default for fields that don't need dropdowns */}
+                  {!["Shipment No", "CTN No", "Customer Name"].includes(
+                    editData.field
+                  ) && (
+                    <input
+                      type="text"
+                      value={editData.value}
+                      onChange={(e) =>
+                        setEditData({ ...editData, value: e.target.value })
+                      }
+                      className="w-full text-black px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-emerald-500 outline-none"
+                      autoFocus
+                    />
+                  )}
+                </div>
+
                 <div className="flex gap-3 mt-6">
                   <button
                     onClick={() => setIsEditModalOpen(false)}
-                    className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50"
+                    className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-all"
                   >
                     Cancel
                   </button>
                   <button
-                    onClick={() => setIsEditModalOpen(false)}
-                    className="flex-1 px-6 py-3 bg-emerald-600 text-white font-medium rounded-xl hover:bg-emerald-700 shadow-md"
+                    onClick={handleSaveEdit}
+                    className="flex-1 px-6 py-3 bg-emerald-600 text-white font-medium rounded-xl hover:bg-emerald-700 shadow-md transition-all"
                   >
                     Save Change
                   </button>
@@ -107,10 +169,10 @@ const PreviewSection = ({ productInfo }) => {
               </div>
             </div>
           </div>,
-          document.body // This sends the modal to the top level
+          document.body
         )}
 
-      {/* Header */}
+      {/* Main Preview Content */}
       <div className="bg-linear-to-r from-[#008594] via-[#0d9c90] to-[#10b981] p-5 text-white rounded-t-2xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -126,8 +188,7 @@ const PreviewSection = ({ productInfo }) => {
         </div>
       </div>
 
-      <div className="p-5 space-y-4">
-        {/* Shipment & CTN Grid */}
+      <div className="p-5 space-y-4 text-black">
         <div className="grid grid-cols-2 gap-3">
           <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-100 group relative">
             <button
@@ -144,7 +205,9 @@ const PreviewSection = ({ productInfo }) => {
                 Shipment
               </p>
             </div>
-            <p className="font-bold text-gray-800">{productInfo.shipment}</p>
+            <p className="font-bold text-gray-800">
+              {productInfo.shipment || "Not selected"}
+            </p>
           </div>
 
           <div className="p-3 bg-blue-50 rounded-lg border border-blue-100 group relative">
@@ -162,11 +225,12 @@ const PreviewSection = ({ productInfo }) => {
                 CTN No
               </p>
             </div>
-            <p className="font-bold text-gray-800">{productInfo.ctnNo}</p>
+            <p className="font-bold text-gray-800">
+              {productInfo.ctnNo || "Not selected"}
+            </p>
           </div>
         </div>
 
-        {/* Entries List */}
         <div className="space-y-3">
           {productInfo.customerEntries.map((customer) => {
             const isExpanded = expandedCustomers[customer.id];
@@ -188,7 +252,7 @@ const PreviewSection = ({ productInfo }) => {
                         <FiUser className="text-purple-600" />
                       </div>
                       <span className="font-bold text-gray-700">
-                        {customer.customerName}
+                        {customer.customerName || "Empty Customer"}
                       </span>
                     </div>
                     <FiChevronDown
@@ -222,43 +286,16 @@ const PreviewSection = ({ productInfo }) => {
                             Goods Name
                           </p>
                           <p className="font-bold text-gray-800">
-                            {customer.goodsName}
+                            {customer.goodsName || "N/A"}
                           </p>
                           <p className="text-sm text-gray-600 italic">
                             {customer.chineseName}
                           </p>
                         </div>
                       </div>
-                      <button
-                        onClick={() =>
-                          handleEditClick(
-                            "customer",
-                            "Goods Details",
-                            customer.goodsName,
-                            customer.id
-                          )
-                        }
-                        className="opacity-0 group-hover:opacity-100 p-1 text-pink-500"
-                      >
-                        <FiEdit2 size={14} />
-                      </button>
                     </div>
-
                     <div className="grid grid-cols-2 gap-3">
                       <div className="p-3 bg-green-50 rounded-lg relative group">
-                        <button
-                          onClick={() =>
-                            handleEditClick(
-                              "customer",
-                              "Quantity",
-                              customer.goodsQuantity,
-                              customer.id
-                            )
-                          }
-                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 text-green-600"
-                        >
-                          <FiEdit2 size={10} />
-                        </button>
                         <div className="flex items-center gap-2 mb-1">
                           <FiShoppingCart className="text-green-600 text-sm" />
                           <p className="text-xs text-green-600 uppercase font-medium">
@@ -266,25 +303,11 @@ const PreviewSection = ({ productInfo }) => {
                           </p>
                         </div>
                         <p className="text-xl font-bold text-gray-800">
-                          {customer.goodsQuantity}{" "}
+                          {customer.goodsQuantity || 0}{" "}
                           <span className="text-xs font-normal">PCS</span>
                         </p>
                       </div>
-
                       <div className="p-3 bg-amber-50 rounded-lg relative group">
-                        <button
-                          onClick={() =>
-                            handleEditClick(
-                              "customer",
-                              "Weight",
-                              customer.weight,
-                              customer.id
-                            )
-                          }
-                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 text-amber-600"
-                        >
-                          <FiEdit2 size={10} />
-                        </button>
                         <div className="flex items-center gap-2 mb-1">
                           <FiBarChart className="text-amber-600 text-sm" />
                           <p className="text-xs text-amber-600 uppercase font-medium">
@@ -297,7 +320,6 @@ const PreviewSection = ({ productInfo }) => {
                         </p>
                       </div>
                     </div>
-
                     <div className="p-3 bg-gray-900 rounded-lg text-white flex justify-between items-center">
                       <div className="flex items-center gap-2">
                         <FiDollarSign className="text-green-400" />
@@ -315,21 +337,27 @@ const PreviewSection = ({ productInfo }) => {
         </div>
 
         {/* Summary Section */}
+
         <div className="mt-6 pt-4 border-t-2 border-dashed border-gray-100">
           <div className="bg-linear-to-br from-gray-800 to-gray-900 rounded-2xl p-5 shadow-xl text-white">
             <div className="flex items-center gap-2 mb-4 border-b border-gray-700 pb-3">
               <FiTruck className="text-blue-400" />
+
               <h3 className="font-bold">Shipment Summary</h3>
             </div>
+
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-gray-400 text-sm">Total Weight:</span>
+
                 <span className="font-bold text-lg">
                   {totalWeight.toFixed(2)} KGs
                 </span>
               </div>
+
               <div className="flex justify-between items-center">
                 <span className="text-gray-400 text-sm">Total Cost:</span>
+
                 <span className="font-bold text-2xl text-green-400">
                   ${totalCost}
                 </span>

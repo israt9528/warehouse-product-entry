@@ -190,3 +190,8 @@ div[style*="max-height: 500"] {
     color: black !important;
     background: white !important;
 }
+
+/* Fix Select2 inside high z-index portals */
+.select2-container--open {
+    z-index: 10000000 !important; 
+}

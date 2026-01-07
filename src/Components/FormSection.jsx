@@ -1,65 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { IoIosAddCircle, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import DropdownWithSearch from "./DropdownWithSearch";
-import { HiArrowPath } from "react-icons/hi2";
 import { FaLocationArrow, FaTrash } from "react-icons/fa";
-import { TiArrowSync } from "react-icons/ti";
 import toast from "react-hot-toast";
 
-const FormSection = () => {
-  const [ctnNo, setCtnNo] = useState("");
-
-  const [shipment, setShipment] = useState("");
-
-  const [customerSections, setCustomerSections] = useState([
-    {
-      id: 1,
-      customerName: "",
-      chineseName: "",
-      goodsName: "",
-      goodsQuantity: "",
-      weight: "",
-      expressNumber: "",
-      crm: "",
-      isExpanded: true,
-    },
-  ]);
+const FormSection = ({
+  shipment,
+  setShipment,
+  ctnNo,
+  setCtnNo,
+  customerSections,
+  setCustomerSections,
+  shipmentOptions,
+  setShipmentOptions,
+  ctnOptions,
+  setCtnOptions,
+  customerOptions,
+  setCustomerOptions,
+}) => {
+  const [allShipmentDetails, setAllShipmentDetails] = useState([]);
+  const [allCustomerDetails, setAllCustomerDetails] = useState([]);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-
   const [modalType, setModalType] = useState("");
 
-  const [newItemName, setNewItemName] = useState("");
-
-  const [ctnOptions, setCtnOptions] = useState([
-    "SKH 506",
-    "SKH 507",
-    "SKH 508",
-    "SKH 509",
-    "SKH 510",
-    "SKH 511",
-    "SKH 512",
-    "SKH 513",
-    "SKH 514",
-    "SKH 515",
-  ]);
-
-  const [shipmentOptions, setShipmentOptions] = useState([
-    "Shipment 1",
-    "Shipment 2",
-    "Shipment 3",
-    "Shipment 4",
-    "Shipment 5",
-  ]);
-
-  const [customerOptions, setCustomerOptions] = useState([
-    "PURPLE WAVE",
-    "ADNAN ROOMY",
-    "ABDUI KADER",
-    "ISRAT ENAMUL",
-    "SLS OVI",
-    "SRI COLLINS",
-  ]);
+  const [newItemData, setNewItemData] = useState({
+    shipmentName: "",
+    shipmentType: "",
+    description: "",
+    status: "",
+    entryBy: "",
+    updatedBy: "",
+    name: "",
+    mobile: "",
+    address: "",
+  });
 
   const handleAddNewItem = (type) => {
     setModalType(type);
@@ -67,31 +42,40 @@ const FormSection = () => {
   };
 
   const handleSaveNewItem = () => {
-    if (!newItemName.trim()) return;
-
     if (modalType === "ctn") {
-      setCtnOptions([...ctnOptions, newItemName]);
-
-      setCtnNo(newItemName);
+      if (!newItemData.shipmentName.trim()) return;
+      setCtnOptions([...ctnOptions, newItemData.shipmentName]);
+      setCtnNo(newItemData.shipmentName);
+    } else if (modalType === "shipment") {
+      if (!newItemData.shipmentName.trim()) return;
+      setShipmentOptions([...shipmentOptions, newItemData.shipmentName]);
+      setAllShipmentDetails([...allShipmentDetails, { ...newItemData }]);
+      setShipment(newItemData.shipmentName);
     } else if (modalType === "customer") {
-      setCustomerOptions([...customerOptions, newItemName]);
-
+      if (!newItemData.name.trim()) return;
+      setCustomerOptions([...customerOptions, newItemData.name]);
+      setAllCustomerDetails([...allCustomerDetails, { ...newItemData }]);
       setCustomerSections((sections) =>
         sections.map((section) => ({
           ...section,
-
           customerName:
-            section.customerName === "" ? newItemName : section.customerName,
+            section.customerName === ""
+              ? newItemData.name
+              : section.customerName,
         }))
       );
-    } else if (modalType === "shipment") {
-      setShipmentOptions([...shipmentOptions, newItemName]);
-
-      setShipment(newItemName);
     }
-
-    setNewItemName("");
-
+    setNewItemData({
+      shipmentName: "",
+      shipmentType: "",
+      description: "",
+      status: "",
+      entryBy: "",
+      updatedBy: "",
+      name: "",
+      mobile: "",
+      address: "",
+    });
     setIsAddModalOpen(false);
   };
 
@@ -115,7 +99,6 @@ const FormSection = () => {
 
   const addCustomerSection = () => {
     const newId = Math.max(...customerSections.map((s) => s.id), 0) + 1;
-
     setCustomerSections((prevSections) => [
       ...prevSections.map((section) => ({ ...section, isExpanded: false })),
       {
@@ -126,11 +109,12 @@ const FormSection = () => {
         goodsQuantity: "",
         weight: "",
         expressNumber: "",
-        crm: "",
+        cbm: "",
         isExpanded: true,
       },
     ]);
   };
+
   const removeCustomerSection = (sectionId) => {
     if (customerSections.length > 1) {
       setCustomerSections((sections) =>
@@ -141,9 +125,7 @@ const FormSection = () => {
 
   const resetForm = () => {
     setCtnNo("");
-
     setShipment("");
-
     setCustomerSections([
       {
         id: 1,
@@ -153,7 +135,7 @@ const FormSection = () => {
         goodsQuantity: "",
         weight: "",
         expressNumber: "",
-        crm: "",
+        cbm: "",
         isExpanded: true,
       },
     ]);
@@ -161,66 +143,46 @@ const FormSection = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!shipment.trim()) {
-      toast.error("Please select or enter a Shipment.");
+    if (!shipment.trim() || !ctnNo.trim()) {
+      toast.error("Please fill required fields.");
       return;
     }
 
-    if (!ctnNo.trim()) {
-      toast.error("Please select or enter a CTN No.");
-      return;
-    }
-
-    const hasValidEntry = customerSections.some(
-      (section) => section.customerName.trim() && section.goodsName.trim()
+    const selectedShipmentMeta = allShipmentDetails.find(
+      (s) => s.shipmentName === shipment
     );
-
-    if (!hasValidEntry) {
-      toast.error(
-        "Please fill in at least one customer entry with Customer Name and Goods Name."
-      );
-      return;
-    }
 
     const submissionData = {
       shipment,
+      shipmentMeta: selectedShipmentMeta || null,
       ctnNo,
       customerEntries: customerSections.map((section, index) => {
-        const { isExpanded: _isExpanded, id: _id, ...cleanData } = section;
-
-        return {
-          id: index + 1,
-          ...cleanData,
-        };
+        const extraCust = allCustomerDetails.find(
+          (c) => c.name === section.customerName
+        );
+        const { isExpanded, id, ...cleanData } = section;
+        return { id: index + 1, ...cleanData, customerMeta: extraCust || null };
       }),
     };
-    console.log("Form submitted:", submissionData);
-    toast.success(
-      `Form submitted successfully!\nShipment: ${shipment}\nCTN No: ${ctnNo}\nCustomer Entries: ${customerSections.length}`
-    );
+
+    console.log("Submission Data:", submissionData);
+    toast.success("Form submitted! Full data logged to console.");
     resetForm();
   };
 
-  // Inside FormSection component
   useEffect(() => {
     if (customerSections.length > 1) {
-      window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: "smooth",
-      });
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }
   }, [customerSections.length]);
 
   return (
     <div>
-      {/* Add Item Modal */}
-
       {isAddModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-linear-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-300">
-            <div className="bg-linear-to-r from-purple-500 to-blue-500 p-6 text-white rounded-t-2xl">
-              <h3 className="text-2xl font-bold">
+            <div className="bg-linear-to-r from-purple-500 to-blue-500 p-6 py-3 text-white rounded-t-2xl">
+              <h3 className="text-xl font-bold">
                 Add New{" "}
                 {modalType === "ctn"
                   ? "CTN No"
@@ -228,61 +190,148 @@ const FormSection = () => {
                   ? "Shipment"
                   : "Customer"}
               </h3>
-
-              <p className="text-purple-100 mt-1">Add to dropdown options</p>
+              <p className="text-purple-100 mt-1 text-sm">
+                Add to dropdown options
+              </p>
             </div>
 
-            <div className="p-6">
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Enter{" "}
-                  {modalType === "ctn"
-                    ? "CTN number"
-                    : modalType === "shipment"
-                    ? "shipment name"
-                    : "customer name"}
-                </label>
-
+            <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+              {modalType === "shipment" && (
+                <>
+                  <input
+                    type="text"
+                    placeholder="Shipment Name"
+                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all"
+                    value={newItemData.shipmentName}
+                    onChange={(e) =>
+                      setNewItemData({
+                        ...newItemData,
+                        shipmentName: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Shipment Type"
+                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
+                    value={newItemData.shipmentType}
+                    onChange={(e) =>
+                      setNewItemData({
+                        ...newItemData,
+                        shipmentType: e.target.value,
+                      })
+                    }
+                  />
+                  <textarea
+                    placeholder="Description"
+                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
+                    value={newItemData.description}
+                    onChange={(e) =>
+                      setNewItemData({
+                        ...newItemData,
+                        description: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Status"
+                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
+                    value={newItemData.status}
+                    onChange={(e) =>
+                      setNewItemData({ ...newItemData, status: e.target.value })
+                    }
+                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Entry By"
+                      className="w-1/2 text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
+                      value={newItemData.entryBy}
+                      onChange={(e) =>
+                        setNewItemData({
+                          ...newItemData,
+                          entryBy: e.target.value,
+                        })
+                      }
+                    />
+                    <input
+                      type="text"
+                      placeholder="Updated By"
+                      className="w-1/2 text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
+                      value={newItemData.updatedBy}
+                      onChange={(e) =>
+                        setNewItemData({
+                          ...newItemData,
+                          updatedBy: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </>
+              )}
+              {modalType === "customer" && (
+                <>
+                  <input
+                    type="text"
+                    placeholder="Customer Name"
+                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
+                    value={newItemData.name}
+                    onChange={(e) =>
+                      setNewItemData({ ...newItemData, name: e.target.value })
+                    }
+                  />
+                  <input
+                    type="number"
+                    placeholder="Mobile"
+                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
+                    value={newItemData.mobile}
+                    onChange={(e) =>
+                      setNewItemData({ ...newItemData, mobile: e.target.value })
+                    }
+                  />
+                  <textarea
+                    placeholder="Address"
+                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
+                    value={newItemData.address}
+                    onChange={(e) =>
+                      setNewItemData({
+                        ...newItemData,
+                        address: e.target.value,
+                      })
+                    }
+                  />
+                </>
+              )}
+              {modalType === "ctn" && (
                 <input
                   type="text"
-                  value={newItemName}
-                  onChange={(e) => setNewItemName(e.target.value)}
-                  placeholder={`Enter ${
-                    modalType === "ctn"
-                      ? "CTN-XXX"
-                      : modalType === "shipment"
-                      ? "shipment name"
-                      : "customer name"
-                  }`}
-                  className="w-full text-black px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
-                  autoFocus
+                  placeholder="Enter CTN-XXX"
+                  className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
+                  value={newItemData.shipmentName}
+                  onChange={(e) =>
+                    setNewItemData({
+                      ...newItemData,
+                      shipmentName: e.target.value,
+                    })
+                  }
                 />
-              </div>
+              )}
 
-              <div className="flex gap-3">
+              <div className="flex gap-3 pt-4">
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsAddModalOpen(false);
-
-                    setNewItemName("");
-                  }}
-                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-all duration-200 hover:shadow-md"
+                  onClick={() => setIsAddModalOpen(false)}
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-all"
                 >
                   Cancel
                 </button>
-
                 <button
                   type="button"
                   onClick={handleSaveNewItem}
-                  className="flex-1 px-6 py-3 bg-linear-to-r from-purple-500 to-blue-500 text-white font-medium rounded-xl hover:from-purple-600 hover:to-blue-600 transition-all duration-200 shadow-md hover:shadow-lg"
+                  className="flex-1 px-6 py-3 bg-linear-to-r from-purple-500 to-blue-500 text-white font-medium rounded-xl shadow-md"
                 >
-                  Add{" "}
-                  {modalType === "ctn"
-                    ? "CTN"
-                    : modalType === "shipment"
-                    ? "Shipment"
-                    : "Customer"}
+                  Add
                 </button>
               </div>
             </div>
@@ -292,8 +341,6 @@ const FormSection = () => {
 
       <form className="text-black" onSubmit={handleSubmit}>
         <div className="p-6 md:p-8 space-y-6">
-          {/* Shipment field */}
-
           <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-5 border border-blue-200">
             <DropdownWithSearch
               label="Shipment"
@@ -305,8 +352,6 @@ const FormSection = () => {
               onAddNew={() => handleAddNewItem("shipment")}
             />
           </div>
-
-          {/* CTN No Field */}
 
           <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-5 border border-blue-200">
             <DropdownWithSearch
@@ -320,104 +365,81 @@ const FormSection = () => {
             />
           </div>
 
-          {/* Customer Information Sections */}
-
           {customerSections.map((section, index) => (
             <div
               key={section.id}
               className="bg-linear-to-br from-white to-blue-50 rounded-2xl shadow-lg border-2 border-blue-100 overflow-hidden transition-all duration-300 hover:border-purple-200"
             >
-              {/* Section header */}
-
-              <div className="flex justify-between items-center p-5 md:p-6 border-b border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
+              <div className="flex justify-between items-center p-5 md:p-6 rounded-t-2xl border-b border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => toggleSectionCollapse(section.id)}
-                    className="flex items-center gap-3 text-gray-800 hover:text-purple-600 transition-colors duration-200"
+                    className="flex items-center gap-3 text-gray-800 hover:text-purple-600 transition-colors"
                   >
                     <div className="h-10 w-10 rounded-lg bg-linear-to-r from-purple-500 to-blue-500 flex items-center justify-center shadow-md">
                       <span className="text-white font-bold">{index + 1}</span>
                     </div>
-
-                    <div>
+                    <div className="text-left">
                       <h4 className="text-xl font-bold">
                         Customer Entry #{index + 1}
                       </h4>
-
                       <p className="text-sm text-gray-600">
                         Click to {section.isExpanded ? "collapse" : "expand"}
                       </p>
                     </div>
                   </button>
                 </div>
-
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => toggleSectionCollapse(section.id)}
-                    className="px-4 py-2 bg-linear-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 rounded-lg transition-all duration-200 font-medium flex items-center gap-2 shadow-md hover:shadow-lg"
+                    className="px-4 py-2 bg-linear-to-r from-blue-500 to-purple-500 text-white rounded-lg shadow-md"
                   >
                     {section.isExpanded ? (
-                      <>
-                        <IoIosArrowUp className="h-4 w-4" />
-                      </>
+                      <IoIosArrowUp className="h-4 w-4" />
                     ) : (
-                      <>
-                        <IoIosArrowDown className="h-4 w-4" />
-                      </>
+                      <IoIosArrowDown className="h-4 w-4" />
                     )}
                   </button>
-
                   {customerSections.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeCustomerSection(section.id)}
-                      className="px-4 py-2 bg-linear-to-r from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 rounded-lg transition-all duration-200 font-medium shadow-md hover:shadow-lg"
+                      className="px-4 py-2 bg-linear-to-r from-red-500 to-pink-500 text-white rounded-lg shadow-md"
                     >
-                      <FaTrash className="h-4 w-4"></FaTrash>
+                      <FaTrash className="h-4 w-4" />
                     </button>
                   )}
                 </div>
               </div>
 
-              {/* Collapsible content */}
-
               <div
                 className={`transition-all duration-300 ease-in-out ${
                   section.isExpanded
-                    ? "opacity-100 p-5 md:p-6 visible overflow-visible"
-                    : "max-h-0 opacity-0 overflow-hidden invisible"
+                    ? "opacity-100 p-5 md:p-6 visible"
+                    : "max-h-0 opacity-0 invisible overflow-hidden"
                 }`}
-                style={
-                  section.isExpanded
-                    ? { maxHeight: "none", overflow: "visible" }
-                    : {}
-                }
+                style={section.isExpanded ? { maxHeight: "none" } : {}}
               >
                 <div className="space-y-6">
-                  {/* Customer Name Field */}
-
                   <div className="bg-linear-to-r from-purple-50 to-blue-50 rounded-xl p-5 border border-purple-100">
                     <DropdownWithSearch
                       label="Customer Name"
                       options={customerOptions}
                       value={section.customerName}
-                      onChange={(value) =>
+                      onChange={(val) =>
                         handleCustomerSectionChange(
                           section.id,
                           "customerName",
-                          value || ""
+                          val || ""
                         )
                       }
-                      placeholder="Select or search customer"
+                      placeholder="Select customer"
                       isRequired={true}
-                      onAddNew={() => handleAddNewItem("customer")} // Add this
+                      onAddNew={() => handleAddNewItem("customer")}
                     />
                   </div>
-
-                  {/* Other Fields Grid */}
-
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {[
                       {
@@ -442,33 +464,25 @@ const FormSection = () => {
                         field: "expressNumber",
                         type: "text",
                       },
-                      {
-                        label: "CBM",
-                        field: "crm",
-                        type: "text",
-                      },
-                    ].map((fieldConfig, idx) => (
+                      { label: "CBM", field: "cbm", type: "text" },
+                    ].map((config, idx) => (
                       <div key={idx} className="group">
                         <label className="block text-black font-medium text-lg mb-2">
-                          {fieldConfig.label}
+                          {config.label}
                         </label>
-
                         <input
-                          type={fieldConfig.type}
-                          value={section[fieldConfig.field]}
+                          type={config.type}
+                          value={section[config.field]}
                           onChange={(e) =>
                             handleCustomerSectionChange(
                               section.id,
-
-                              fieldConfig.field,
-
+                              config.field,
                               e.target.value
                             )
                           }
-                          className="w-full px-4 py-2 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 group-hover:border-blue-300"
-                          placeholder={`Enter ${fieldConfig.label.toLowerCase()}`}
-                          min={fieldConfig.type === "number" ? "0" : undefined}
-                          step={fieldConfig.step}
+                          className="w-full px-4 py-2 bg-white border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all group-hover:border-blue-300"
+                          placeholder={`Enter ${config.label.toLowerCase()}`}
+                          step={config.step}
                         />
                       </div>
                     ))}
@@ -476,41 +490,27 @@ const FormSection = () => {
                 </div>
               </div>
 
-              {/* Collapsed footer */}
-
               {!section.isExpanded && (
                 <div className="p-4 border-t border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                     <div className="flex items-center gap-4 flex-wrap">
-                      <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-lg shadow-sm">
-                        <span className="text-gray-600">Customer:</span>
-
+                      <div className="bg-white px-3 py-1 rounded-lg shadow-sm text-sm">
+                        <span className="text-gray-600">Customer:</span>{" "}
                         <span className="font-semibold text-gray-800">
                           {section.customerName || "Not set"}
                         </span>
                       </div>
-
-                      <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-lg shadow-sm">
-                        <span className="text-gray-600">Goods:</span>
-
+                      <div className="bg-white px-3 py-1 rounded-lg shadow-sm text-sm">
+                        <span className="text-gray-600">Goods:</span>{" "}
                         <span className="font-semibold text-gray-800">
                           {section.goodsName || "Not set"}
                         </span>
                       </div>
-
-                      <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-lg shadow-sm">
-                        <span className="text-gray-600">Qty:</span>
-
-                        <span className="font-semibold text-gray-800">
-                          {section.goodsQuantity || "0"}
-                        </span>
-                      </div>
                     </div>
-
                     <button
                       type="button"
                       onClick={() => toggleSectionCollapse(section.id)}
-                      className="text-purple-600 hover:text-purple-700 font-medium hover:underline"
+                      className="text-purple-600 hover:text-purple-700 font-medium hover:underline text-sm"
                     >
                       Expand to edit →
                     </button>
@@ -520,23 +520,18 @@ const FormSection = () => {
             </div>
           ))}
 
-          {/* Summary Section */}
-
           <div className="bg-linear-to-r from-blue-100 to-purple-100 rounded-2xl p-6 border border-blue-200">
-            {/* Form Buttons */}
-
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 type="submit"
-                className="flex-1 flex justify-center items-center gap-2 px-6 py-4 bg-linear-to-r from-[#008594] via-[#38b2ac] to-[#0ceded] text-white font-bold rounded-xl hover:from-[#026b77] hover:to-[#04c8c8] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="flex-1 flex justify-center items-center gap-2 px-6 py-4 bg-linear-to-r from-[#008594] via-[#38b2ac] to-[#0ceded] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
               >
                 <FaLocationArrow /> Submit All Entries
               </button>
-
               <button
                 type="button"
                 onClick={addCustomerSection}
-                className="flex-1 flex items-center justify-center gap-3 px-6 py-3 bg-linear-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="flex-1 flex items-center justify-center gap-3 px-6 py-3 bg-linear-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
               >
                 <div className="h-8 w-8 rounded-lg bg-white/20 flex items-center justify-center">
                   <IoIosAddCircle className="h-5 w-5" />

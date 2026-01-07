@@ -10,17 +10,11 @@ import { IoIosAddCircle } from "react-icons/io";
 
 const DropdownWithSearch = ({
   label,
-
   options,
-
   value,
-
   onChange,
-
   placeholder,
-
   isRequired = false,
-
   onAddNew,
 }) => {
   const selectRef = useRef(null);
@@ -51,7 +45,7 @@ const DropdownWithSearch = ({
         $select.select2("destroy");
       }
     };
-  }, [options]); // Re-init if options change (important for "Add New")
+  }, [options]);
 
   // Sync state changes
 
