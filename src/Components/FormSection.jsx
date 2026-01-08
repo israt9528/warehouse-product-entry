@@ -396,31 +396,33 @@ const FormSection = ({
       )}
 
       <form className="text-black" onSubmit={handleSubmit}>
-        <div className="p-3 space-y-6">
-          <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-3 border border-blue-200">
-            <DropdownWithSearch
-              label="Shipment"
-              apiEndpoint="http://localhost/invi/index.php/plugins/freight/shipments"
-              value={shipment}
-              onChange={setShipment}
-              placeholder="Select shipment"
-              isRequired
-              onAddNew={() => handleAddNewItem("shipment")}
-              options={shipmentOptions}
-            />
-          </div>
+        <div className="p-3 space-y-4">
+          <div className="flex gap-3">
+            <div className="flex-1 bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-3 border border-blue-200">
+              <DropdownWithSearch
+                label="Shipment"
+                apiEndpoint="http://localhost/invi/index.php/plugins/freight/shipments"
+                value={shipment}
+                onChange={setShipment}
+                placeholder="Select shipment"
+                isRequired
+                onAddNew={() => handleAddNewItem("shipment")}
+                options={shipmentOptions}
+              />
+            </div>
 
-          <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-3 border border-blue-200">
-            <DropdownWithSearch
-              label="CTN No"
-              options={ctnOptions}
-              value={ctnNo}
-              onChange={setCtnNo}
-              placeholder="Select CTN"
-              isRequired
-              onAddNew={() => handleAddNewItem("ctn")}
-              apiEndpoint="http://localhost/invi/index.php/plugins/freight/cartons"
-            />
+            <div className="flex-1 bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-3 border border-blue-200">
+              <DropdownWithSearch
+                label="CTN No"
+                options={ctnOptions}
+                value={ctnNo}
+                onChange={setCtnNo}
+                placeholder="Select CTN"
+                isRequired
+                onAddNew={() => handleAddNewItem("ctn")}
+                apiEndpoint="http://localhost/invi/index.php/plugins/freight/cartons"
+              />
+            </div>
           </div>
 
           {customerSections.map((section, index) => (
@@ -428,7 +430,7 @@ const FormSection = ({
               key={section.id}
               className="bg-linear-to-br from-white to-blue-50 rounded-2xl border-2 border-blue-100 overflow-hidden transition-all duration-300 hover:border-purple-200"
             >
-              <div className="flex justify-between items-center p-4 md:p-6 rounded-t-2xl border-b border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
+              <div className="flex justify-between items-center p-3 rounded-t-2xl border-b border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
