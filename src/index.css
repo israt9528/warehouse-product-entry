@@ -3,7 +3,7 @@
 
 /* 1. Wrap AdminLTE in a base layer to lower its priority */
 @layer base {
-    @import "./adminlte.min.css";
+    /* @import "./adminlte.min.css"; */
 
     .select2-container *, .select2-container *:before, .select2-container *:after {
         box-sizing: border-box !important;

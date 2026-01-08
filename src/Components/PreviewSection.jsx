@@ -97,7 +97,7 @@ const PreviewSection = ({
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-9999999 p-4">
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-300 text-black">
               <div className="bg-linear-to-r from-emerald-600 to-green-500 p-6 text-white rounded-t-2xl">
-                <h3 className="text-2xl font-bold flex items-center gap-2">
+                <h3 className="text-lg font-bold flex items-center gap-2">
                   <FiEdit2 /> Update {editData.field}
                 </h3>
               </div>
@@ -112,7 +112,7 @@ const PreviewSection = ({
                         setEditData({ ...editData, value: val })
                       }
                       placeholder="Select Shipment"
-                      apiEndpoint="/api/shipments"
+                      apiEndpoint="http://localhost/invi/index.php/plugins/freight/shipments"
                     />
                   )}
                   {editData.field === "CTN No" && (
@@ -136,7 +136,7 @@ const PreviewSection = ({
                         setEditData({ ...editData, value: val })
                       }
                       placeholder="Select Customer"
-                      apiEndpoint="/api/shipments"
+                      apiEndpoint="http://localhost/invi/index.php/client/ajax_clientDropdown"
                     />
                   )}
                   {/* Default for fields that don't need dropdowns */}
@@ -158,13 +158,13 @@ const PreviewSection = ({
                 <div className="flex gap-3 mt-6">
                   <button
                     onClick={() => setIsEditModalOpen(false)}
-                    className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-all"
+                    className="flex-1 px-6 py-2 border-2 border-gray-300 text-gray-700 font-medium rounded-xl! hover:bg-gray-50 transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSaveEdit}
-                    className="flex-1 px-6 py-3 bg-emerald-600 text-white font-medium rounded-xl hover:bg-emerald-700 shadow-md transition-all"
+                    className="flex-1 px-6 py-2 bg-emerald-600 text-white font-medium rounded-xl! hover:bg-emerald-700 shadow-md transition-all"
                   >
                     Save Change
                   </button>
@@ -273,7 +273,7 @@ const PreviewSection = ({
                         customer.id
                       )
                     }
-                    className="p-3 text-purple-400 hover:text-purple-600"
+                    className="pr-3 text-purple-400 hover:text-purple-600"
                   >
                     <FiEdit2 size={14} />
                   </button>

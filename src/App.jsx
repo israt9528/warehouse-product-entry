@@ -82,39 +82,9 @@ const App = () => {
                       <h1 className="text-3xl md:text-4xl font-bold bg-linear-to-r from-white to-cyan-200 bg-clip-text text-transparent mb-0">
                         Warehouse Product Entry
                       </h1>
-                      <p className="text-cyan-100 mt-2 text-base mb-0">
+                      <p className="text-cyan-100 mt-2 text-base my-0">
                         Streamlined product intake system with real-time preview
                       </p>
-                    </div>
-                  </div>
-
-                  {/* Stats Bar */}
-                  <div className="flex flex-wrap gap-4 mt-4">
-                    <div className="flex items-center gap-3 bg-white/15 backdrop-blur-sms px-4 h-12 rounded-xl">
-                      <FiUsers className="h-5 w-5" />
-                      <div>
-                        <p className="text-sm opacity-90 mt-3">
-                          Active Entries
-                        </p>
-                        {/* <p className="text-xl font-bold">
-                          {productInfo.length}
-                        </p> */}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 bg-white/15 backdrop-blur-sm px-4 h-12 rounded-xl">
-                      <FiTrendingUp className="h-5 w-5" />
-                      <div>
-                        <p className="text-sm opacity-90 mt-3">
-                          Total Submissions
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 bg-white/15 backdrop-blur-sm px-4 h-12 rounded-xl">
-                      <FiHome className="h-5 w-5" />
-                      <div>
-                        <p className="text-sm opacity-90 mt-3">Warehouse</p>
-                        {/* <p className="text-xl font-bold">Main</p> */}
-                      </div>
                     </div>
                   </div>
                 </div>

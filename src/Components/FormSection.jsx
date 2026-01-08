@@ -41,42 +41,88 @@ const FormSection = ({
     setIsAddModalOpen(true);
   };
 
-  const handleSaveNewItem = () => {
-    if (modalType === "ctn") {
+  const handleSaveNewItem = async () => {
+    // 1. Determine URL and Data payload based on modalType
+    let url = "";
+    let payload = {};
+
+    if (modalType === "shipment") {
       if (!newItemData.shipmentName.trim()) return;
-      setCtnOptions([...ctnOptions, newItemData.shipmentName]);
-      setCtnNo(newItemData.shipmentName);
-    } else if (modalType === "shipment") {
-      if (!newItemData.shipmentName.trim()) return;
-      setShipmentOptions([...shipmentOptions, newItemData.shipmentName]);
-      setAllShipmentDetails([...allShipmentDetails, { ...newItemData }]);
-      setShipment(newItemData.shipmentName);
+      url = "http://localhost/invi/index.php/plugins/freight/save-shipment";
+      payload = {
+        shipment_name: newItemData.shipmentName,
+        shipment_type: newItemData.shipmentType,
+        description: newItemData.description,
+        status: newItemData.status,
+      };
     } else if (modalType === "customer") {
       if (!newItemData.name.trim()) return;
-      setCustomerOptions([...customerOptions, newItemData.name]);
-      setAllCustomerDetails([...allCustomerDetails, { ...newItemData }]);
-      setCustomerSections((sections) =>
-        sections.map((section) => ({
-          ...section,
-          customerName:
-            section.customerName === ""
-              ? newItemData.name
-              : section.customerName,
-        }))
-      );
+      url = "http://localhost/invi/index.php/sell_con/saveInstantClient";
+      payload = {
+        name: newItemData.name,
+        mobile: newItemData.mobile,
+        address: newItemData.address,
+      };
+    } else if (modalType === "ctn") {
+      if (!newItemData.shipmentName.trim()) return;
+      url = "http://localhost/invi/index.php/plugins/freight/add_ctn";
+      payload = { ctn_no: newItemData.shipmentName };
     }
-    setNewItemData({
-      shipmentName: "",
-      shipmentType: "",
-      description: "",
-      status: "",
-      updatedBy: "",
-      entryBy: "",
-      name: "",
-      mobile: "",
-      address: "",
-    });
-    setIsAddModalOpen(false);
+
+    try {
+      // 2. Perform the AJAX request
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error("Failed to save data");
+
+      const result = await response.json();
+      console.log(result);
+
+      toast.success("Successfully added!");
+
+      // 3. Keep existing logic to update the UI state immediately
+      if (modalType === "ctn") {
+        setCtnOptions([...ctnOptions, newItemData.shipmentName]);
+        setCtnNo(newItemData.shipmentName);
+      } else if (modalType === "shipment") {
+        setShipmentOptions([...shipmentOptions, newItemData.shipmentName]);
+        setAllShipmentDetails([...allShipmentDetails, { ...newItemData }]);
+        setShipment(newItemData.shipmentName);
+      } else if (modalType === "customer") {
+        setCustomerOptions([...customerOptions, newItemData.name]);
+        setAllCustomerDetails([...allCustomerDetails, { ...newItemData }]);
+        setCustomerSections((sections) =>
+          sections.map((section) => ({
+            ...section,
+            customerName:
+              section.customerName === ""
+                ? newItemData.name
+                : section.customerName,
+          }))
+        );
+      }
+
+      // Reset and Close
+      setNewItemData({
+        shipmentName: "",
+        shipmentType: "",
+        description: "",
+        status: "",
+        updatedBy: "",
+        entryBy: "",
+        name: "",
+        mobile: "",
+        address: "",
+      });
+      setIsAddModalOpen(false);
+    } catch (error) {
+      console.error("Error saving item:", error);
+      toast.error("Error connecting to server");
+    }
   };
 
   const handleCustomerSectionChange = (sectionId, field, value) => {
@@ -181,8 +227,8 @@ const FormSection = ({
       {isAddModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-linear-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-300">
-            <div className="bg-linear-to-r from-purple-500 to-blue-500 p-6 py-3 text-white rounded-t-2xl">
-              <h3 className="text-xl font-bold">
+            <div className="bg-linear-to-r from-purple-500 to-blue-500 px-4 py-3 text-white rounded-t-2xl">
+              <h3 className="text-lg mb-0 font-bold">
                 Add New{" "}
                 {modalType === "ctn"
                   ? "CTN No"
@@ -195,11 +241,12 @@ const FormSection = ({
               </p>
             </div>
 
-            <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+            <div className="p-6 space-y-2! max-h-[60vh] overflow-y-auto">
               {modalType === "shipment" && (
                 <>
                   <input
                     type="text"
+                    name="shipment_name"
                     placeholder="Shipment Name"
                     className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all"
                     value={newItemData.shipmentName}
@@ -213,6 +260,7 @@ const FormSection = ({
 
                   {/* Shipment Type Dropdown */}
                   <select
+                    name="shipment_type"
                     className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all bg-white"
                     value={newItemData.shipmentType}
                     onChange={(e) =>
@@ -231,8 +279,9 @@ const FormSection = ({
                   </select>
 
                   <textarea
+                    name="shipment_description"
                     placeholder="Description"
-                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
+                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all bg-white"
                     value={newItemData.description}
                     onChange={(e) =>
                       setNewItemData({
@@ -244,6 +293,7 @@ const FormSection = ({
 
                   {/* Status Dropdown */}
                   <select
+                    name="shipment_status"
                     className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all bg-white"
                     value={newItemData.status}
                     onChange={(e) =>
@@ -268,8 +318,9 @@ const FormSection = ({
                 <>
                   <input
                     type="text"
+                    name="client_name"
                     placeholder="Customer Name"
-                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
+                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all bg-white"
                     value={newItemData.name}
                     onChange={(e) =>
                       setNewItemData({ ...newItemData, name: e.target.value })
@@ -277,16 +328,18 @@ const FormSection = ({
                   />
                   <input
                     type="number"
+                    name="client_mobile"
                     placeholder="Mobile"
-                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
+                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all bg-white"
                     value={newItemData.mobile}
                     onChange={(e) =>
                       setNewItemData({ ...newItemData, mobile: e.target.value })
                     }
                   />
                   <textarea
+                    name="client_address"
                     placeholder="Address"
-                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
+                    className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all bg-white"
                     value={newItemData.address}
                     onChange={(e) =>
                       setNewItemData({
@@ -316,14 +369,14 @@ const FormSection = ({
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-all"
+                  className="flex-1 px-6 py-2 border-2 border-gray-300 text-gray-700 font-medium rounded-xl! hover:bg-gray-100! transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={handleSaveNewItem}
-                  className="flex-1 px-6 py-3 bg-linear-to-r from-purple-500 to-blue-500 text-white font-medium rounded-xl shadow-md"
+                  className="flex-1 px-6 py-2 bg-linear-to-r from-purple-500 to-blue-500 text-white font-medium rounded-xl! shadow-md hover:-translate-y-1! transition-all duration-200"
                 >
                   Add
                 </button>
@@ -334,11 +387,11 @@ const FormSection = ({
       )}
 
       <form className="text-black" onSubmit={handleSubmit}>
-        <div className="p-4 md:p-6 space-y-6">
-          <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-200">
+        <div className="p-3 space-y-6">
+          <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-3 border border-blue-200">
             <DropdownWithSearch
               label="Shipment"
-              apiEndpoint="/invi/index.php/client/ajax_clientDropdown" // Add your actual API URL here
+              apiEndpoint="http://localhost/invi/index.php/plugins/freight/shipments"
               value={shipment}
               onChange={setShipment}
               placeholder="Select shipment"
@@ -348,7 +401,7 @@ const FormSection = ({
             />
           </div>
 
-          <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-200">
+          <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-3 border border-blue-200">
             <DropdownWithSearch
               label="CTN No"
               options={ctnOptions}
@@ -377,7 +430,7 @@ const FormSection = ({
                       <span className="text-white font-bold">{index + 1}</span>
                     </div>
                     <div className="text-left">
-                      <h4 className="text-[20px] font-bold mb-0">
+                      <h4 className="text-[20px] font-extrabold mb-0">
                         Customer Entry #{index + 1}
                       </h4>
                       <p className="text-sm text-gray-600 mb-0">
@@ -413,13 +466,13 @@ const FormSection = ({
               <div
                 className={`transition-all duration-300 ease-in-out ${
                   section.isExpanded
-                    ? "opacity-100 p-4 md:p-3 visible"
+                    ? "opacity-100 p-3 visible"
                     : "max-h-0 opacity-0 invisible overflow-hidden"
                 }`}
                 style={section.isExpanded ? { maxHeight: "none" } : {}}
               >
                 <div className="space-y-6">
-                  <div className="bg-linear-to-r from-purple-50 to-blue-50 rounded-xl p-4 border border-purple-100">
+                  <div className="bg-linear-to-r from-purple-50 to-blue-50 rounded-xl p-3 border border-purple-100">
                     <DropdownWithSearch
                       label="Customer Name"
                       options={customerOptions}
@@ -434,7 +487,7 @@ const FormSection = ({
                       placeholder="Select customer"
                       isRequired={true}
                       onAddNew={() => handleAddNewItem("customer")}
-                      apiEndpoint="/api/shipments"
+                      apiEndpoint="http://localhost/invi/index.php/client/ajax_clientDropdown"
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -464,7 +517,7 @@ const FormSection = ({
                       { label: "CBM", field: "cbm", type: "text" },
                     ].map((config, idx) => (
                       <div key={idx} className="group">
-                        <label className="block text-black font-medium text-lg mb-2">
+                        <label className="block text-black font-medium text-base mb-1">
                           {config.label}
                         </label>
                         <input
@@ -517,18 +570,18 @@ const FormSection = ({
             </div>
           ))}
 
-          <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-2xl p-6 border border-blue-200">
+          <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-2xl p-3 border border-blue-200">
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 type="submit"
-                className="flex-1 flex justify-center items-center gap-2 px-6 py-3 bg-linear-to-r from-[#008594] via-[#38b2ac] to-[#0ceded] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
+                className="flex-1 flex justify-center items-center gap-2 px-6 py-2.5 bg-linear-to-r from-[#008594] via-[#38b2ac] to-[#0ceded] text-white font-bold rounded-xl! hover:shadow-xl! transform hover:-translate-y-0.5 transition-all"
               >
                 <FaLocationArrow /> Submit All Entries
               </button>
               <button
                 type="button"
                 onClick={addCustomerSection}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-2.5 bg-linear-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl! hover:shadow-xl! transform hover:-translate-y-0.5 transition-all"
               >
                 <div className="h-8 w-8 rounded-lg bg-white/20 flex items-center justify-center">
                   <IoIosAddCircle className="h-5 w-5" />

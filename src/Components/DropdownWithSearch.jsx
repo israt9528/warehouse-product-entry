@@ -79,7 +79,7 @@ const DropdownWithSearch = ({
   return (
     <div className="w-full relative group">
       <div className="flex items-center justify-between mb-2">
-        <label className="block text-black font-medium text-lg">
+        <label className="block text-black font-medium text-base">
           {label} {isRequired && <span className="text-red-500">*</span>}
         </label>
 
