@@ -42,9 +42,9 @@ const FormSection = ({
   };
 
   const handleSaveNewItem = async () => {
-    // 1. Identify URL and Payload based on the Modal Type
     let url = "";
-    let payload = {};
+    // 1. Create a search params object to mimic jQuery's .serialize()
+    let formData = new URLSearchParams();
 
     if (modalType === "shipment") {
       if (!newItemData.shipmentName.trim()) {
@@ -52,82 +52,81 @@ const FormSection = ({
         return;
       }
       url = "http://localhost/invi/index.php/plugins/freight/save-shipment";
-      payload = {
-        shipment_name: newItemData.shipmentName,
-        shipment_type: newItemData.shipmentType,
-        description: newItemData.description,
-        status: newItemData.status,
-      };
+      // Matching the exact 'name' attributes from your demo HTML
+      formData.append("shipment_name", newItemData.shipmentName);
+      formData.append("shipment_type", newItemData.shipmentType);
+      formData.append("shipment_description", newItemData.description);
+      formData.append("shipment_status", newItemData.status);
     } else if (modalType === "customer") {
       if (!newItemData.name.trim()) {
         toast.error("Customer Name is required");
         return;
       }
       url = "http://localhost/invi/index.php/sell_con/saveInstantClient";
-      payload = {
-        name: newItemData.name,
-        mobile: newItemData.mobile,
-        address: newItemData.address,
-      };
+      // Matching the exact 'name' attributes from your demo HTML
+      formData.append("client_name", newItemData.name);
+      formData.append("client_mobile", newItemData.mobile);
+      formData.append("client_address", newItemData.address);
+      formData.append("client_star", "0");
     } else if (modalType === "ctn") {
       if (!newItemData.shipmentName.trim()) {
         toast.error("CTN Number is required");
         return;
       }
       url = "http://localhost/invi/index.php/plugins/freight/add_ctn";
-      payload = {
-        ctn_no: newItemData.shipmentName,
-      };
+      formData.append("ctn_no", newItemData.ctnNo);
     }
 
     try {
-      // 2. Hit the AJAX URL
+      // 2. Perform the request using x-www-form-urlencoded
       const response = await fetch(url, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: JSON.stringify(payload),
+        body: formData.toString(), // Becomes: client_name=John&client_mobile=123...
       });
 
       const result = await response.json();
 
-      // 3. Check for success code from your PHP (result.code: 1)
+      // 3. Check response code
       if (result.code === 1) {
         toast.success(result.message || "Added successfully");
 
-        // 4. Update UI State based on modal type
+        // 4. Update UI using the result from server (now that 'name' won't be false)
+        const finalName =
+          result.name ||
+          (modalType === "customer"
+            ? newItemData.name
+            : newItemData.shipmentName);
+
         if (modalType === "ctn") {
-          setCtnOptions([...ctnOptions, newItemData.shipmentName]);
-          setCtnNo(newItemData.shipmentName);
+          setCtnOptions([...ctnOptions, finalName]);
+          setCtnNo(finalName);
         } else if (modalType === "shipment") {
-          setShipmentOptions([...shipmentOptions, newItemData.shipmentName]);
-          // We include the ID returned from the server (result.id)
+          setShipmentOptions([...shipmentOptions, finalName]);
           setAllShipmentDetails([
             ...allShipmentDetails,
             { ...newItemData, id: result.id },
           ]);
-          setShipment(newItemData.shipmentName);
+          setShipment(finalName);
         } else if (modalType === "customer") {
-          setCustomerOptions([...customerOptions, newItemData.name]);
+          setCustomerOptions([...customerOptions, finalName]);
           setAllCustomerDetails([
             ...allCustomerDetails,
             { ...newItemData, id: result.id },
           ]);
 
-          // Auto-fill the customer name in the active section
           setCustomerSections((sections) =>
             sections.map((section) => ({
               ...section,
               customerName:
-                section.customerName === ""
-                  ? newItemData.name
-                  : section.customerName,
+                section.customerName === "" ? finalName : section.customerName,
             }))
           );
         }
 
-        // 5. Reset the Modal Form and Close
+        // 5. Reset Modal state
         setNewItemData({
           shipmentName: "",
           shipmentType: "",
@@ -141,7 +140,6 @@ const FormSection = ({
         });
         setIsAddModalOpen(false);
       } else {
-        // Handle server-side errors (e.g., duplicate entry)
         toast.error(result.message || "Failed to add item");
       }
     } catch (error) {
