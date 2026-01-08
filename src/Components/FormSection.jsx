@@ -42,12 +42,15 @@ const FormSection = ({
   };
 
   const handleSaveNewItem = async () => {
-    // 1. Determine URL and Data payload based on modalType
+    // 1. Identify URL and Payload based on the Modal Type
     let url = "";
     let payload = {};
 
     if (modalType === "shipment") {
-      if (!newItemData.shipmentName.trim()) return;
+      if (!newItemData.shipmentName.trim()) {
+        toast.error("Shipment Name is required");
+        return;
+      }
       url = "http://localhost/invi/index.php/plugins/freight/save-shipment";
       payload = {
         shipment_name: newItemData.shipmentName,
@@ -56,7 +59,10 @@ const FormSection = ({
         status: newItemData.status,
       };
     } else if (modalType === "customer") {
-      if (!newItemData.name.trim()) return;
+      if (!newItemData.name.trim()) {
+        toast.error("Customer Name is required");
+        return;
+      }
       url = "http://localhost/invi/index.php/sell_con/saveInstantClient";
       payload = {
         name: newItemData.name,
@@ -64,64 +70,83 @@ const FormSection = ({
         address: newItemData.address,
       };
     } else if (modalType === "ctn") {
-      if (!newItemData.shipmentName.trim()) return;
+      if (!newItemData.shipmentName.trim()) {
+        toast.error("CTN Number is required");
+        return;
+      }
       url = "http://localhost/invi/index.php/plugins/freight/add_ctn";
-      payload = { ctn_no: newItemData.shipmentName };
+      payload = {
+        ctn_no: newItemData.shipmentName,
+      };
     }
 
     try {
-      // 2. Perform the AJAX request
+      // 2. Hit the AJAX URL
       const response = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) throw new Error("Failed to save data");
-
       const result = await response.json();
-      console.log(result);
 
-      toast.success("Successfully added!");
+      // 3. Check for success code from your PHP (result.code: 1)
+      if (result.code === 1) {
+        toast.success(result.message || "Added successfully");
 
-      // 3. Keep existing logic to update the UI state immediately
-      if (modalType === "ctn") {
-        setCtnOptions([...ctnOptions, newItemData.shipmentName]);
-        setCtnNo(newItemData.shipmentName);
-      } else if (modalType === "shipment") {
-        setShipmentOptions([...shipmentOptions, newItemData.shipmentName]);
-        setAllShipmentDetails([...allShipmentDetails, { ...newItemData }]);
-        setShipment(newItemData.shipmentName);
-      } else if (modalType === "customer") {
-        setCustomerOptions([...customerOptions, newItemData.name]);
-        setAllCustomerDetails([...allCustomerDetails, { ...newItemData }]);
-        setCustomerSections((sections) =>
-          sections.map((section) => ({
-            ...section,
-            customerName:
-              section.customerName === ""
-                ? newItemData.name
-                : section.customerName,
-          }))
-        );
+        // 4. Update UI State based on modal type
+        if (modalType === "ctn") {
+          setCtnOptions([...ctnOptions, newItemData.shipmentName]);
+          setCtnNo(newItemData.shipmentName);
+        } else if (modalType === "shipment") {
+          setShipmentOptions([...shipmentOptions, newItemData.shipmentName]);
+          // We include the ID returned from the server (result.id)
+          setAllShipmentDetails([
+            ...allShipmentDetails,
+            { ...newItemData, id: result.id },
+          ]);
+          setShipment(newItemData.shipmentName);
+        } else if (modalType === "customer") {
+          setCustomerOptions([...customerOptions, newItemData.name]);
+          setAllCustomerDetails([
+            ...allCustomerDetails,
+            { ...newItemData, id: result.id },
+          ]);
+
+          // Auto-fill the customer name in the active section
+          setCustomerSections((sections) =>
+            sections.map((section) => ({
+              ...section,
+              customerName:
+                section.customerName === ""
+                  ? newItemData.name
+                  : section.customerName,
+            }))
+          );
+        }
+
+        // 5. Reset the Modal Form and Close
+        setNewItemData({
+          shipmentName: "",
+          shipmentType: "",
+          description: "",
+          status: "",
+          updatedBy: "",
+          entryBy: "",
+          name: "",
+          mobile: "",
+          address: "",
+        });
+        setIsAddModalOpen(false);
+      } else {
+        // Handle server-side errors (e.g., duplicate entry)
+        toast.error(result.message || "Failed to add item");
       }
-
-      // Reset and Close
-      setNewItemData({
-        shipmentName: "",
-        shipmentType: "",
-        description: "",
-        status: "",
-        updatedBy: "",
-        entryBy: "",
-        name: "",
-        mobile: "",
-        address: "",
-      });
-      setIsAddModalOpen(false);
     } catch (error) {
-      console.error("Error saving item:", error);
-      toast.error("Error connecting to server");
+      console.error("AJAX Error:", error);
+      toast.error("Could not connect to the server");
     }
   };
 
