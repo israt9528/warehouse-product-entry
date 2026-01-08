@@ -70,7 +70,7 @@ const FormSection = ({
         toast.error("CTN Number is required");
         return;
       }
-      url = "http://localhost/invi/index.php/plugins/freight/add_ctn";
+      url = "http://localhost/invi/index.php/plugins/freight/save-carton";
       formData.append("ctn_no", newItemData.shipmentName);
     }
 
@@ -419,7 +419,7 @@ const FormSection = ({
               placeholder="Select CTN"
               isRequired
               onAddNew={() => handleAddNewItem("ctn")}
-              apiEndpoint="/api/shipments"
+              apiEndpoint="http://localhost/invi/index.php/plugins/freight/cartons"
             />
           </div>
 
