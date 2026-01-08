@@ -43,7 +43,6 @@ const FormSection = ({
 
   const handleSaveNewItem = async () => {
     let url = "";
-    // 1. Create a search params object to mimic jQuery's .serialize()
     let formData = new URLSearchParams();
 
     if (modalType === "shipment") {
@@ -52,7 +51,6 @@ const FormSection = ({
         return;
       }
       url = "http://localhost/invi/index.php/plugins/freight/save-shipment";
-      // Matching the exact 'name' attributes from your demo HTML
       formData.append("shipment_name", newItemData.shipmentName);
       formData.append("shipment_type", newItemData.shipmentType);
       formData.append("shipment_description", newItemData.description);
@@ -63,7 +61,6 @@ const FormSection = ({
         return;
       }
       url = "http://localhost/invi/index.php/sell_con/saveInstantClient";
-      // Matching the exact 'name' attributes from your demo HTML
       formData.append("client_name", newItemData.name);
       formData.append("client_mobile", newItemData.mobile);
       formData.append("client_address", newItemData.address);
@@ -74,26 +71,23 @@ const FormSection = ({
         return;
       }
       url = "http://localhost/invi/index.php/plugins/freight/add_ctn";
-      formData.append("ctn_no", newItemData.ctnNo);
+      formData.append("ctn_no", newItemData.shipmentName);
     }
 
     try {
-      // 2. Perform the request using x-www-form-urlencoded
       const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: formData.toString(), // Becomes: client_name=John&client_mobile=123...
+        body: formData.toString(),
       });
 
       const result = await response.json();
 
-      // 3. Check response code
       if (result.code === 1) {
         toast.success(result.message || "Added successfully");
 
-        // 4. Update UI using the result from server (now that 'name' won't be false)
         const finalName =
           result.name ||
           (modalType === "customer"
@@ -126,7 +120,6 @@ const FormSection = ({
           );
         }
 
-        // 5. Reset Modal state
         setNewItemData({
           shipmentName: "",
           shipmentType: "",
@@ -259,9 +252,6 @@ const FormSection = ({
                   ? "Shipment"
                   : "Customer"}
               </h3>
-              <p className="text-purple-100 mt-1 text-sm">
-                Add to dropdown options
-              </p>
             </div>
 
             <div className="p-6 space-y-2! max-h-[60vh] overflow-y-auto">
@@ -281,7 +271,6 @@ const FormSection = ({
                     }
                   />
 
-                  {/* Shipment Type Dropdown */}
                   <select
                     name="shipment_type"
                     className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all bg-white"
@@ -296,9 +285,9 @@ const FormSection = ({
                     <option value="" disabled>
                       Select Shipment Type
                     </option>
-                    <option value="By Air">BY AIR</option>
-                    <option value="By Ship">BY SHiP</option>
-                    <option value="By Road">BY ROAD</option>
+                    <option value="BY_AIR">BY AIR</option>
+                    <option value="BY_SHIP">BY SHIP</option>
+                    <option value="BY_ROAD">BY ROAD</option>
                   </select>
 
                   <textarea
@@ -314,29 +303,25 @@ const FormSection = ({
                     }
                   />
 
-                  {/* Status Dropdown */}
                   <select
                     name="shipment_status"
                     className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all bg-white"
                     value={newItemData.status}
                     onChange={(e) =>
-                      setNewItemData({
-                        ...newItemData,
-                        status: e.target.value,
-                      })
+                      setNewItemData({ ...newItemData, status: e.target.value })
                     }
                   >
                     <option value="" disabled>
                       Select Status
                     </option>
-                    <option value="CHINA WAREHOUSE">CHINA WAREHOUSE</option>
-                    <option value="BD WAREHOUSE">BD WAREHOUSE</option>
-                    <option value="ON AIR">ON AIR</option>
-                    <option value="ON ROAD">ON ROAD</option>
-                    <option value="ON SHIP">ON SHIP</option>
+                    <option value="CHINA_WAREHOUSE">CHINA WAREHOUSE</option>
+                    <option value="BD_WAREHOUSE">BD WAREHOUSE</option>
+                    <option value="ON_AIR">ON AIR</option>
+                    <option value="ON_SHIP">ON SHIP</option>
                   </select>
                 </>
               )}
+
               {modalType === "customer" && (
                 <>
                   <input
@@ -373,6 +358,7 @@ const FormSection = ({
                   />
                 </>
               )}
+
               {modalType === "ctn" && (
                 <input
                   type="text"
@@ -456,9 +442,6 @@ const FormSection = ({
                       <h4 className="text-[20px] font-extrabold mb-0">
                         Customer Entry #{index + 1}
                       </h4>
-                      <p className="text-sm text-gray-600 mb-0">
-                        Click to {section.isExpanded ? "collapse" : "expand"}
-                      </p>
                     </div>
                   </button>
                 </div>
@@ -562,34 +545,6 @@ const FormSection = ({
                   </div>
                 </div>
               </div>
-
-              {!section.isExpanded && (
-                <div className="p-4 border-t border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                    <div className="flex items-center gap-4 flex-wrap">
-                      <div className="bg-white px-3 py-1 rounded-lg shadow-sm text-sm">
-                        <span className="text-gray-600">Customer:</span>{" "}
-                        <span className="font-semibold text-gray-800">
-                          {section.customerName || "Not set"}
-                        </span>
-                      </div>
-                      <div className="bg-white px-3 py-1 rounded-lg shadow-sm text-sm">
-                        <span className="text-gray-600">Goods:</span>{" "}
-                        <span className="font-semibold text-gray-800">
-                          {section.goodsName || "Not set"}
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => toggleSectionCollapse(section.id)}
-                      className="text-purple-600 hover:text-purple-700 font-medium hover:underline text-sm"
-                    >
-                      Expand to edit →
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           ))}
 

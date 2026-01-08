@@ -245,7 +245,7 @@ const PreviewSection = ({
                 key={customer.id}
                 className="border border-gray-100 rounded-xl overflow-hidden"
               >
-                <div className="flex items-center bg-gray-50 hover:bg-purple-50 transition-colors duration-200">
+                <div className="flex items-center bg-gray-50 hover:bg-purple-50 rounded-xl transition-colors duration-200">
                   <button
                     onClick={() => toggleCustomer(customer.id)}
                     className="flex-1 flex items-center justify-between p-4"

@@ -38,15 +38,17 @@ const DropdownWithSearch = ({
             dataType: "json",
             delay: 250,
             data: (params) => ({
-              q: params.term,
+              q: params.term, // Your API seems to expect 'q' or 'search'
               page: params.page,
             }),
             processResults: (data) => {
-              // Map your API response here
+              // FIX: Point to data.result and use item.text
+              const items = data.result || data.results || [];
               return {
-                results: data.map((item) => ({
-                  id: item.name || item.id,
-                  text: item.name || item.text,
+                results: items.map((item) => ({
+                  // If your API returns 'id' and 'text', use them directly
+                  id: item.id,
+                  text: item.text || item.name || item.id,
                 })),
               };
             },
