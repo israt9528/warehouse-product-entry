@@ -91,7 +91,7 @@
 
 /* Highlighted item in list */
 .select2-results__option--highlighted[aria-selected] {
-    background-color: #a855f7 !important; /* purple-500 */
+    background-color: #008594 !important; /* purple-500 */
 }
 
 /* Ensure the modal is always above Select2 dropdowns */

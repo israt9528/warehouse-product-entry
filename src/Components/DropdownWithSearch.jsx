@@ -25,7 +25,7 @@ const DropdownWithSearch = ({
 
     $select.select2({
       placeholder: placeholder,
-      allowClear: true,
+      allowClear: false,
       width: "100%",
       dropdownParent: $(document.body),
       ajax: apiEndpoint

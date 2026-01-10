@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoIosAddCircle, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import DropdownWithSearch from "./DropdownWithSearch";
-import { FaLocationArrow, FaTrash } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 const FormSection = ({
@@ -11,12 +11,14 @@ const FormSection = ({
   setCtnNo,
   customerSections,
   setCustomerSections,
-  // Base defaults to localhost if not provided
+  // Props from App.jsx
+  allShipmentDetails,
+  setAllShipmentDetails,
+  allCustomerDetails,
+  setAllCustomerDetails,
+  hideButtons,
   BASE = "http://localhost/invi",
 }) => {
-  const [allShipmentDetails, setAllShipmentDetails] = useState([]);
-  const [allCustomerDetails, setAllCustomerDetails] = useState([]);
-
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
 
@@ -152,77 +154,12 @@ const FormSection = ({
     );
   };
 
-  const addCustomerSection = () => {
-    const newId = Math.max(...customerSections.map((s) => s.id), 0) + 1;
-    setCustomerSections((prevSections) => [
-      ...prevSections.map((section) => ({ ...section, isExpanded: false })),
-      {
-        id: newId,
-        customerName: "",
-        chineseName: "",
-        goodsName: "",
-        goodsQuantity: "",
-        weight: "",
-        expressNumber: "",
-        cbm: "",
-        isExpanded: true,
-      },
-    ]);
-  };
-
   const removeCustomerSection = (sectionId) => {
     if (customerSections.length > 1) {
       setCustomerSections((sections) =>
         sections.filter((section) => section.id !== sectionId)
       );
     }
-  };
-
-  const resetForm = () => {
-    setCtnNo("");
-    setShipment("");
-    setCustomerSections([
-      {
-        id: 1,
-        customerName: "",
-        chineseName: "",
-        goodsName: "",
-        goodsQuantity: "",
-        weight: "",
-        expressNumber: "",
-        cbm: "",
-        isExpanded: true,
-      },
-    ]);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!shipment.trim() || !ctnNo.trim()) {
-      toast.error("Please fill required fields.");
-      return;
-    }
-
-    const selectedShipmentMeta = allShipmentDetails.find(
-      (s) => s.shipmentName === shipment
-    );
-
-    const submissionData = {
-      shipment,
-      shipmentMeta: selectedShipmentMeta || null,
-      ctnNo,
-      customerEntries: customerSections.map((section, index) => {
-        const extraCust = allCustomerDetails.find(
-          (c) => c.name === section.customerName
-        );
-        const { isExpanded: _isExpanded, id: _id, ...cleanData } = section;
-        return { id: index + 1, ...cleanData, customerMeta: extraCust || null };
-      }),
-    };
-
-    console.log("Submission Data:", submissionData);
-    toast.success("Form submitted!");
-    resetForm();
   };
 
   useEffect(() => {
@@ -233,6 +170,7 @@ const FormSection = ({
 
   return (
     <div>
+      {/* Modal JSX */}
       {isAddModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-linear-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-300">
@@ -381,7 +319,7 @@ const FormSection = ({
         </div>
       )}
 
-      <form className="text-black" onSubmit={handleSubmit}>
+      <form className="text-black" onSubmit={(e) => e.preventDefault()}>
         <div className="p-3 space-y-4">
           <div className="flex gap-3">
             <div className="flex-1 bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-3 border border-blue-200">
@@ -574,26 +512,25 @@ const FormSection = ({
             </div>
           ))}
 
-          <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-2xl p-3 border border-blue-200">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                type="submit"
-                className="flex-1 flex justify-center items-center gap-2 px-6 py-2.5 bg-linear-to-r from-[#008594] via-[#38b2ac] to-[#0ceded] text-white font-bold rounded-xl! hover:shadow-xl! transform hover:-translate-y-0.5 transition-all"
-              >
-                <FaLocationArrow /> Submit All Entries
-              </button>
-              <button
-                type="button"
-                onClick={addCustomerSection}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-2.5 bg-linear-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl! hover:shadow-xl! transform hover:-translate-y-0.5 transition-all"
-              >
-                <div className="h-8 w-8 rounded-lg bg-white/20 flex items-center justify-center">
-                  <IoIosAddCircle className="h-5 w-5" />
-                </div>
-                Add Customer Entry
-              </button>
+          {/* This section will only show if not hidden by prop */}
+          {!hideButtons && (
+            <div className="bg-linear-to-r from-blue-50 to-purple-50 rounded-2xl p-3 border border-blue-200">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    /* addCustomerSection logic moved to App */
+                  }}
+                  className="flex-1 flex items-center justify-center gap-2 px-6 py-2.5 bg-linear-to-r from-blue-500 to-purple-500 text-white font-bold rounded-xl! hover:shadow-xl! transform hover:-translate-y-0.5 transition-all"
+                >
+                  <div className="h-8 w-8 rounded-lg bg-white/20 flex items-center justify-center">
+                    <IoIosAddCircle className="h-5 w-5" />
+                  </div>
+                  Add Customer Entry
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </form>
     </div>
