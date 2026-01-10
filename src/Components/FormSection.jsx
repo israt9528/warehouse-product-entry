@@ -414,78 +414,86 @@ const FormSection = ({
               key={section.id}
               className="bg-linear-to-br from-white to-blue-50 rounded-2xl border-2 border-blue-100 overflow-hidden transition-all duration-300 hover:border-purple-200"
             >
-              <div className="flex justify-between items-center p-3 rounded-2xl border-b border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => toggleSectionCollapse(section.id)}
-                    className="flex items-center gap-3 text-gray-800 hover:text-purple-600 transition-colors"
-                  >
-                    <div className="h-8 w-8 rounded-lg bg-linear-to-r from-purple-500 to-blue-500 flex items-center justify-center shadow-md">
-                      <span className="text-white font-bold">{index + 1}</span>
-                    </div>
-                    <div className="text-left">
-                      <h4 className="text-[20px] font-extrabold mb-0">
-                        Customer Entry
-                      </h4>
-                      {!section.isExpanded &&
-                        (section.customerName || section.goodsName) && (
-                          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm font-medium text-gray-600">
-                            {section.customerName && (
-                              <span className="flex items-center gap-1">
-                                <span className="text-purple-600 font-bold uppercase text-[12px] mt-1">
-                                  Customer:
-                                </span>
-                                <span className="truncate max-w-37.5">
-                                  {section.customerName}
-                                </span>
-                              </span>
-                            )}
-                            {section.goodsName && (
-                              <span className="flex items-center gap-1">
-                                <span className="text-blue-600 font-bold uppercase text-[12px] mt-1">
-                                  Goods name:
-                                </span>
-                                <span className="truncate max-w-37.5">
-                                  {section.goodsName}
-                                </span>
-                              </span>
-                            )}
-                            {section.goodsQuantity && (
-                              <span className="flex items-center gap-1">
-                                <span className="text-teal-600 font-bold uppercase text-[12px] mt-1">
-                                  Qty:
-                                </span>
-                                {section.goodsQuantity}
-                              </span>
-                            )}
-                          </div>
-                        )}
-                    </div>
-                  </button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => toggleSectionCollapse(section.id)}
-                    className="px-3 py-2 bg-linear-to-r from-blue-500 to-purple-500 text-white rounded-lg shadow-md"
-                  >
-                    {section.isExpanded ? (
-                      <IoIosArrowUp className="h-4 w-4" />
-                    ) : (
-                      <IoIosArrowDown className="h-4 w-4" />
-                    )}
-                  </button>
-                  {customerSections.length > 1 && (
+              <div className="flex flex-col">
+                <div className="flex justify-between items-center p-3 rounded-2xl border-b border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
+                  <div className="flex items-center gap-3">
                     <button
                       type="button"
-                      onClick={() => removeCustomerSection(section.id)}
-                      className="px-3 py-2 bg-linear-to-r from-red-500 to-pink-500 text-white rounded-lg shadow-md"
+                      onClick={() => toggleSectionCollapse(section.id)}
+                      className="flex items-center gap-3 text-gray-800 hover:text-purple-600 transition-colors"
                     >
-                      <FaTrash className="h-4 w-4" />
+                      <div className="h-8 w-8 rounded-lg bg-linear-to-r from-purple-500 to-blue-500 flex items-center justify-center shadow-md">
+                        <span className="text-white font-bold">
+                          {index + 1}
+                        </span>
+                      </div>
+                      <div className="text-left">
+                        <h4 className="text-[20px] font-extrabold mb-0">
+                          Customer Entry
+                        </h4>
+                      </div>
                     </button>
-                  )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => toggleSectionCollapse(section.id)}
+                      className="px-3 py-2 bg-linear-to-r from-blue-500 to-purple-500 text-white rounded-lg shadow-md"
+                    >
+                      {section.isExpanded ? (
+                        <IoIosArrowUp className="h-4 w-4" />
+                      ) : (
+                        <IoIosArrowDown className="h-4 w-4" />
+                      )}
+                    </button>
+                    {customerSections.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeCustomerSection(section.id)}
+                        className="px-3 py-2 bg-linear-to-r from-red-500 to-pink-500 text-white rounded-lg shadow-md"
+                      >
+                        <FaTrash className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
+
+                {!section.isExpanded &&
+                  (section.customerName || section.goodsName) && (
+                    <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm font-medium text-gray-600 p-2 mx-30">
+                      {section.customerName && (
+                        <span className="flex items-center gap-1 bg-black/5! px-3 py-1 rounded-2xl">
+                          <span className="text-purple-600 font-bold uppercase text-[12px] mt-1">
+                            Customer:
+                          </span>
+                          <span className="truncate max-w-37.5">
+                            {allCustomerDetails.find(
+                              (c) =>
+                                String(c.id) === String(section.customerName)
+                            )?.name || section.customerName}
+                          </span>
+                        </span>
+                      )}
+                      {section.goodsName && (
+                        <span className="flex items-center gap-1 bg-black/5! px-3 py-1 rounded-2xl">
+                          <span className="text-blue-600 font-bold uppercase text-[12px] mt-1">
+                            Goods:
+                          </span>
+                          <span className="truncate max-w-37.5">
+                            {section.goodsName}
+                          </span>
+                        </span>
+                      )}
+                      {section.goodsQuantity && (
+                        <span className="flex items-center gap-1 bg-black/5! px-3 py-1 rounded-2xl">
+                          <span className="text-teal-600 font-bold uppercase text-[12px] mt-1">
+                            Qty:
+                          </span>
+                          {section.goodsQuantity}
+                        </span>
+                      )}
+                    </div>
+                  )}
               </div>
 
               <div
