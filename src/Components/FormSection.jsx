@@ -442,7 +442,7 @@ const FormSection = ({
                     </div>
                     <div className="text-left">
                       <h4 className="text-[20px] font-extrabold mb-0">
-                        Customer Entry #{index + 1}
+                        Customer Entry 
                       </h4>
                     </div>
                   </button>

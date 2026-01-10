@@ -74,7 +74,7 @@ const PreviewSection = ({ productInfo }) => {
 
       <div className="p-3 space-y-3 text-black">
         <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 bg-emerald-50 leading-0! rounded-lg border border-emerald-100 h-19">
+          <div className="px-3 pt-1 bg-emerald-50 leading-0! rounded-lg border flex flex-col justify-center border-emerald-100 h-15">
             <div className="flex gap-2">
               <PiShippingContainer className="text-emerald-600" />
               <p className="text-xs text-emerald-600 font-bold uppercase">
@@ -86,7 +86,7 @@ const PreviewSection = ({ productInfo }) => {
             </p>
           </div>
 
-          <div className="p-3 bg-blue-50 leading-0! rounded-lg border border-blue-100 h-19">
+          <div className="px-3 pt-1 bg-blue-50 leading-0! rounded-lg border flex flex-col justify-center  border-blue-100 h-15">
             <div className="flex gap-2">
               <FiHash className="text-blue-600" />
               <p className="text-xs text-blue-600 font-bold uppercase">
