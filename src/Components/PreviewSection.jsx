@@ -103,7 +103,6 @@ const PreviewSection = ({ productInfo }) => {
           {productInfo.customerEntries.map((customer) => {
             const isExpanded = expandedCustomers[customer.id];
             const weight = parseFloat(customer.weight) || 0;
-            const cost = (weight * 2.5).toFixed(2);
 
             return (
               <div

@@ -11,12 +11,8 @@ const FormSection = ({
   setCtnNo,
   customerSections,
   setCustomerSections,
-  shipmentOptions,
-  setShipmentOptions,
-  ctnOptions,
-  setCtnOptions,
-  customerOptions,
-  setCustomerOptions,
+  // Base defaults to localhost if not provided
+  BASE = "http://localhost/invi",
 }) => {
   const [allShipmentDetails, setAllShipmentDetails] = useState([]);
   const [allCustomerDetails, setAllCustomerDetails] = useState([]);
@@ -50,7 +46,7 @@ const FormSection = ({
         toast.error("Shipment Name is required");
         return;
       }
-      url = "http://localhost/invi/index.php/plugins/freight/save-shipment";
+      url = `${BASE}/index.php/plugins/freight/save-shipment`;
       formData.append("shipment_name", newItemData.shipmentName);
       formData.append("shipment_type", newItemData.shipmentType);
       formData.append("shipment_description", newItemData.description);
@@ -60,7 +56,7 @@ const FormSection = ({
         toast.error("Customer Name is required");
         return;
       }
-      url = "http://localhost/invi/index.php/sell_con/saveInstantClient";
+      url = `${BASE}/index.php/sell_con/saveInstantClient`;
       formData.append("client_name", newItemData.name);
       formData.append("client_mobile", newItemData.mobile);
       formData.append("client_address", newItemData.address);
@@ -70,7 +66,7 @@ const FormSection = ({
         toast.error("CTN Number is required");
         return;
       }
-      url = "http://localhost/invi/index.php/plugins/freight/save-carton";
+      url = `${BASE}/index.php/plugins/freight/save-carton`;
       formData.append("ctn_no", newItemData.shipmentName);
     }
 
@@ -95,17 +91,14 @@ const FormSection = ({
             : newItemData.shipmentName);
 
         if (modalType === "ctn") {
-          setCtnOptions([...ctnOptions, finalName]);
           setCtnNo(finalName);
         } else if (modalType === "shipment") {
-          setShipmentOptions([...shipmentOptions, finalName]);
           setAllShipmentDetails([
             ...allShipmentDetails,
             { ...newItemData, id: result.id },
           ]);
           setShipment(finalName);
         } else if (modalType === "customer") {
-          setCustomerOptions([...customerOptions, finalName]);
           setAllCustomerDetails([
             ...allCustomerDetails,
             { ...newItemData, id: result.id },
@@ -259,7 +252,6 @@ const FormSection = ({
                 <>
                   <input
                     type="text"
-                    name="shipment_name"
                     placeholder="Shipment Name"
                     className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all"
                     value={newItemData.shipmentName}
@@ -272,7 +264,6 @@ const FormSection = ({
                   />
 
                   <select
-                    name="shipment_type"
                     className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all bg-white"
                     value={newItemData.shipmentType}
                     onChange={(e) =>
@@ -291,7 +282,6 @@ const FormSection = ({
                   </select>
 
                   <textarea
-                    name="shipment_description"
                     placeholder="Description"
                     className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all bg-white"
                     value={newItemData.description}
@@ -304,7 +294,6 @@ const FormSection = ({
                   />
 
                   <select
-                    name="shipment_status"
                     className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all bg-white"
                     value={newItemData.status}
                     onChange={(e) =>
@@ -326,7 +315,6 @@ const FormSection = ({
                 <>
                   <input
                     type="text"
-                    name="client_name"
                     placeholder="Customer Name"
                     className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all bg-white"
                     value={newItemData.name}
@@ -336,7 +324,6 @@ const FormSection = ({
                   />
                   <input
                     type="number"
-                    name="client_mobile"
                     placeholder="Mobile"
                     className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all bg-white"
                     value={newItemData.mobile}
@@ -345,7 +332,6 @@ const FormSection = ({
                     }
                   />
                   <textarea
-                    name="client_address"
                     placeholder="Address"
                     className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 transition-all bg-white"
                     value={newItemData.address}
@@ -401,26 +387,24 @@ const FormSection = ({
             <div className="flex-1 bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-3 border border-blue-200">
               <DropdownWithSearch
                 label="Shipment"
-                apiEndpoint="http://localhost/invi/index.php/plugins/freight/shipments"
+                apiEndpoint={`${BASE}/index.php/plugins/freight/shipments`}
                 value={shipment}
                 onChange={setShipment}
                 placeholder="Select shipment"
                 isRequired
                 onAddNew={() => handleAddNewItem("shipment")}
-                options={shipmentOptions}
               />
             </div>
 
             <div className="flex-1 bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-3 border border-blue-200">
               <DropdownWithSearch
                 label="CTN No"
-                options={ctnOptions}
                 value={ctnNo}
                 onChange={setCtnNo}
                 placeholder="Select CTN"
                 isRequired
                 onAddNew={() => handleAddNewItem("ctn")}
-                apiEndpoint="http://localhost/invi/index.php/plugins/freight/cartons"
+                apiEndpoint={`${BASE}/index.php/plugins/freight/cartons`}
               />
             </div>
           </div>
@@ -430,7 +414,7 @@ const FormSection = ({
               key={section.id}
               className="bg-linear-to-br from-white to-blue-50 rounded-2xl border-2 border-blue-100 overflow-hidden transition-all duration-300 hover:border-purple-200"
             >
-              <div className="flex justify-between items-center p-3 rounded-t-2xl border-b border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
+              <div className="flex justify-between items-center p-3 rounded-2xl border-b border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
@@ -442,8 +426,41 @@ const FormSection = ({
                     </div>
                     <div className="text-left">
                       <h4 className="text-[20px] font-extrabold mb-0">
-                        Customer Entry 
+                        Customer Entry
                       </h4>
+                      {!section.isExpanded &&
+                        (section.customerName || section.goodsName) && (
+                          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm font-medium text-gray-600">
+                            {section.customerName && (
+                              <span className="flex items-center gap-1">
+                                <span className="text-purple-600 font-bold uppercase text-[12px] mt-1">
+                                  Customer:
+                                </span>
+                                <span className="truncate max-w-37.5">
+                                  {section.customerName}
+                                </span>
+                              </span>
+                            )}
+                            {section.goodsName && (
+                              <span className="flex items-center gap-1">
+                                <span className="text-blue-600 font-bold uppercase text-[12px] mt-1">
+                                  Goods name:
+                                </span>
+                                <span className="truncate max-w-37.5">
+                                  {section.goodsName}
+                                </span>
+                              </span>
+                            )}
+                            {section.goodsQuantity && (
+                              <span className="flex items-center gap-1">
+                                <span className="text-teal-600 font-bold uppercase text-[12px] mt-1">
+                                  Qty:
+                                </span>
+                                {section.goodsQuantity}
+                              </span>
+                            )}
+                          </div>
+                        )}
                     </div>
                   </button>
                 </div>
@@ -483,7 +500,6 @@ const FormSection = ({
                   <div className="bg-linear-to-r from-purple-50 to-blue-50 rounded-xl p-3 border border-purple-100">
                     <DropdownWithSearch
                       label="Customer Name"
-                      options={customerOptions}
                       value={section.customerName}
                       onChange={(val) =>
                         handleCustomerSectionChange(
@@ -495,7 +511,7 @@ const FormSection = ({
                       placeholder="Select customer"
                       isRequired={true}
                       onAddNew={() => handleAddNewItem("customer")}
-                      apiEndpoint="http://localhost/invi/index.php/client/ajax_clientDropdown"
+                      apiEndpoint={`${BASE}/index.php/client/ajax_clientDropdown`}
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

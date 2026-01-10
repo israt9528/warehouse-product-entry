@@ -1,22 +1,18 @@
 import { useEffect, useRef } from "react";
-
 import $ from "jquery";
-
 import select2 from "select2";
-
 import "select2/dist/css/select2.min.css";
-
 import { IoIosAddCircle } from "react-icons/io";
 
 const DropdownWithSearch = ({
   label,
-  options,
+  options = [],
   value,
   onChange,
   placeholder,
   isRequired = false,
   onAddNew,
-  apiEndpoint, // New prop for AJAX
+  apiEndpoint,
 }) => {
   const selectRef = useRef(null);
 
@@ -37,18 +33,22 @@ const DropdownWithSearch = ({
             url: apiEndpoint,
             dataType: "json",
             delay: 250,
-            data: (params) => ({
-              q: params.term, // Your API seems to expect 'q' or 'search'
-              page: params.page,
-            }),
+            data: (params) => {
+              return {
+                search: params.term || "",
+                q: params.term || "",
+                type: "query",
+              };
+            },
             processResults: (data) => {
-              // FIX: Point to data.result and use item.text
-              const items = data.result || data.results || [];
+              const items = data.result || data.results || data || [];
               return {
                 results: items.map((item) => ({
-                  // If your API returns 'id' and 'text', use them directly
-                  id: item.id,
-                  text: item.text || item.name || item.id,
+                  id: typeof item === "object" ? item.id || item.text : item,
+                  text:
+                    typeof item === "object"
+                      ? item.text || item.name || item.client_name
+                      : item,
                 })),
               };
             },
@@ -57,22 +57,25 @@ const DropdownWithSearch = ({
         : null,
     });
 
-    $select.on("change", (e) => {
-      onChange($select.val());
+    // Handle Change
+    $select.on("change", () => {
+      const selectedValue = $select.val();
+      if (selectedValue !== value) {
+        onChange(selectedValue);
+      }
     });
 
     return () => {
       if ($.fn.select2) {
+        $select.off("change");
         $select.select2("destroy");
       }
     };
-  }, [apiEndpoint, onChange, placeholder]);
+  }, [apiEndpoint, placeholder]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Sync state changes
-
+  // Sync state changes from outside
   useEffect(() => {
     const $select = $(selectRef.current);
-
     if ($select.val() !== value) {
       $select.val(value).trigger("change.select2");
     }
@@ -92,7 +95,6 @@ const DropdownWithSearch = ({
             className="flex items-center gap-1 text-sm font-semibold text-purple-600 hover:text-purple-800 transition-colors bg-purple-50 px-2 py-1 rounded-lg border border-purple-100"
           >
             <IoIosAddCircle className="text-lg" />
-
             <span>Add New</span>
           </button>
         )}
@@ -101,12 +103,13 @@ const DropdownWithSearch = ({
       <div className="select2-wrapper-custom text-black">
         <select ref={selectRef} className="w-full">
           <option></option>
-
-          {options.map((opt, idx) => (
-            <option key={idx} value={opt}>
-              {opt}
-            </option>
-          ))}
+          {/* Internal options (for newly added items) */}
+          {options &&
+            options.map((opt, idx) => (
+              <option key={idx} value={opt}>
+                {opt}
+              </option>
+            ))}
         </select>
       </div>
     </div>

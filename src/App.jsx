@@ -27,28 +27,6 @@ const App = () => {
     },
   ]);
 
-  const [shipmentOptions, setShipmentOptions] = useState([
-    "Shipment 1",
-    "Shipment 2",
-    "Shipment 3",
-  ]);
-  const [ctnOptions, setCtnOptions] = useState([
-    "SKH 506",
-    "SKH 507",
-    "SKH 508",
-    "SKH 509",
-    "SKH 510",
-  ]);
-  const [customerOptions, setCustomerOptions] = useState([
-    "PURPLE WAVE",
-    "ADNAN ROOMY",
-    "ABDUI KADER",
-  ]);
-
-  // useEffect(() => {
-  //   setProductInfo({ shipment, ctnNo, customerEntries: customerSections });
-  // }, [shipment, ctnNo, customerSections]);
-
   useEffect(() => {
     fetch("/demoData.json")
       .then((res) => {
@@ -67,7 +45,6 @@ const App = () => {
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-purple-50 py-2">
       <div className="max-w-7xl mx-auto relative z-10">
-
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           {/* Left Panel - Form */}
@@ -94,12 +71,6 @@ const App = () => {
                 setCtnNo={setCtnNo}
                 customerSections={customerSections}
                 setCustomerSections={setCustomerSections}
-                shipmentOptions={shipmentOptions}
-                setShipmentOptions={setShipmentOptions}
-                ctnOptions={ctnOptions}
-                setCtnOptions={setCtnOptions}
-                customerOptions={customerOptions}
-                setCustomerOptions={setCustomerOptions}
               />
             </div>
           </div>
@@ -113,9 +84,6 @@ const App = () => {
                   setShipment={setShipment}
                   setCtnNo={setCtnNo}
                   setCustomerSections={setCustomerSections}
-                  shipmentOptions={shipmentOptions}
-                  ctnOptions={ctnOptions}
-                  customerOptions={customerOptions}
                 />
               </div>
             </div>
