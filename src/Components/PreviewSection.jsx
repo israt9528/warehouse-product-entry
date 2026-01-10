@@ -175,15 +175,6 @@ const PreviewSection = ({ productInfo }) => {
                         </p>
                       </div>
                     </div>
-                    <div className="p-3 bg-gray-900 rounded-lg text-white flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <FiDollarSign className="text-green-400" />
-                        <span className="text-sm">Entry Cost</span>
-                      </div>
-                      <span className="text-lg font-bold text-green-400">
-                        ${cost}
-                      </span>
-                    </div>
                   </div>
                 )}
               </div>
