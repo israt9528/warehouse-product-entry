@@ -405,12 +405,20 @@ const FormSection = ({
                             Customer:
                           </span>
                           <span className="truncate max-w-37.5">
-                            {allCustomerDetails.find(
-                              (c) =>
-                                String(c.id) === String(section.customerName)
-                            )?.name ||
-                              section.customerName ||
-                              "Select Customer"}
+                            {(() => {
+                              const searchId = section.customerName;
+                              if (!searchId) return "Select Customer";
+
+                              const found = allCustomerDetails.find(
+                                (c) => String(c.id) === String(searchId)
+                              );
+
+                              if (found && found.text) {
+                                return found.text.split(" :")[0];
+                              }
+
+                              return searchId;
+                            })()}
                           </span>
                         </span>
                       )}

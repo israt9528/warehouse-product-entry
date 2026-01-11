@@ -108,13 +108,19 @@ const App = () => {
 
       if (res.code === 1) {
         Swal.fire({
-          position: "top-center",
           icon: "success",
-          title: res.message,
+          html: `
+    <div style="text-align: center;">
+      <h2 style="color: #3b82f6; font-weight: bold; margin-bottom: 10px;">Submission Successful!</h2>
+      <p style="color: #64748b;">${res.message}</p>
+      <hr style="border: 0; border-top: 1px dashed #cbd5e1; margin: 15px 0;">
+      <p style="font-size: 0.8rem; color: #94a3b8;">Shipment and products have been logged.</p>
+    </div>
+  `,
           showConfirmButton: false,
-          timer: 1500,
+          timer: 2500,
+          borderRadius: "20px",
         });
-
         // toast.success(res.message || "Data saved successfully!");
 
         setCtnNo("");
