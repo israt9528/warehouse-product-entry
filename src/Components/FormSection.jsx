@@ -408,7 +408,9 @@ const FormSection = ({
                             {allCustomerDetails.find(
                               (c) =>
                                 String(c.id) === String(section.customerName)
-                            )?.name || section.customerName}
+                            )?.name ||
+                              section.customerName ||
+                              "Select Customer"}
                           </span>
                         </span>
                       )}

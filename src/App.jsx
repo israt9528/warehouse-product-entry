@@ -5,6 +5,7 @@ import { Toaster } from "react-hot-toast";
 import toast from "react-hot-toast";
 import { FaLocationArrow } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
+import Swal from "sweetalert2";
 
 const BASE = "http://localhost/invi/";
 
@@ -29,6 +30,25 @@ const App = () => {
 
   const [allShipmentDetails, setAllShipmentDetails] = useState([]);
   const [allCustomerDetails, setAllCustomerDetails] = useState([]);
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const response = await fetch(
+          `${BASE}index.php/client/ajax_clientDropdown`
+        );
+        const data = await response.json();
+
+        if (Array.isArray(data)) {
+          setAllCustomerDetails(data);
+        }
+      } catch (error) {
+        console.error("Error loading customer list:", error);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
 
   // ADD CUSTOMER LOGIC (Moved from FormSection)
   const addCustomerSection = () => {
@@ -87,7 +107,15 @@ const App = () => {
       const res = await response.json();
 
       if (res.code === 1) {
-        toast.success(res.message || "Data saved successfully!");
+        Swal.fire({
+          position: "top-center",
+          icon: "success",
+          title: res.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+
+        // toast.success(res.message || "Data saved successfully!");
 
         setCtnNo("");
         setShipment("");
