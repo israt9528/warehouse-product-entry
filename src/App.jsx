@@ -9,11 +9,7 @@ import { IoIosAddCircle } from "react-icons/io";
 const BASE = "http://localhost/invi/";
 
 const App = () => {
-  const [productInfo, setProductInfo] = useState({
-    shipment: "",
-    ctnNo: "",
-    customerEntries: [],
-  });
+  const [previewData, setPreviewData] = useState(null);
 
   const [shipment, setShipment] = useState("");
   const [ctnNo, setCtnNo] = useState("");
@@ -33,13 +29,6 @@ const App = () => {
 
   const [allShipmentDetails, setAllShipmentDetails] = useState([]);
   const [allCustomerDetails, setAllCustomerDetails] = useState([]);
-
-  useEffect(() => {
-    fetch("/demoData.json")
-      .then((res) => res.json())
-      .then((data) => setProductInfo(data))
-      .catch((err) => console.error(err));
-  }, []);
 
   // ADD CUSTOMER LOGIC (Moved from FormSection)
   const addCustomerSection = () => {
@@ -124,14 +113,10 @@ const App = () => {
     }
   };
 
-  // Inside the App component function...
-
-  const [previewHtml, setPreviewHtml] = useState("");
-
   useEffect(() => {
     const loadPreview = async () => {
       if (!shipment || !ctnNo) {
-        setPreviewHtml("");
+        setPreviewData(null);
         return;
       }
 
@@ -140,9 +125,7 @@ const App = () => {
           `${BASE}index.php/plugins/freight/preview-products`,
           {
             method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: new URLSearchParams({
               shipment_id: shipment,
               carton_id: ctnNo,
@@ -152,14 +135,31 @@ const App = () => {
 
         const res = await response.json();
 
-        if (res.html) {
-          setPreviewHtml(res.html);
+        if (res.code === 1 && res.clients) {
+          const transformedData = {
+            shipment: res.header.shipment_name,
+            ctnNo: res.header.carton_name,
+            customerEntries: Object.keys(res.clients).map((clientId) => {
+              const client = res.clients[clientId];
+              const item =
+                client.items && client.items.length > 0 ? client.items[0] : {};
+              return {
+                id: clientId,
+                customerName: client.client_name,
+                chineseName: item.chinese_name || "",
+                goodsName: item.goods_name || "",
+                goodsQuantity: item.qty || 0,
+                weight: item.kg || 0,
+              };
+            }),
+          };
+          setPreviewData(transformedData);
         } else {
-          setPreviewHtml("");
+          setPreviewData(null);
         }
       } catch (error) {
         console.error("Preview Load Error:", error);
-        toast.error("Failed to load server preview");
+        setPreviewData(null);
       }
     };
 
@@ -222,53 +222,7 @@ const App = () => {
           <div className="lg:col-span-1">
             <div className="sticky top-8 space-y-4">
               <div className="bg-white rounded-2xl overflow-hidden border border-gray-200">
-                <PreviewSection
-                  productInfo={productInfo}
-                  setShipment={setShipment}
-                  setCtnNo={setCtnNo}
-                  setCustomerSections={setCustomerSections}
-                />
-              </div>
-
-              <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-                  <h5 className="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
-                    <span className="h-2 w-2 bg-blue-500 rounded-full"></span>
-                    Product Record Preview
-                  </h5>
-                </div>
-
-                <div className="p-4">
-                  {previewHtml ? (
-                    <div
-                      className="prose prose-sm max-w-none text-gray-800"
-                      dangerouslySetInnerHTML={{ __html: previewHtml }}
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-8 px-4 text-center border-2 border-dashed border-gray-100 rounded-xl">
-                      <div className="bg-blue-50 p-3 rounded-full mb-3">
-                        <svg
-                          className="w-6 h-6 text-blue-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                      </div>
-                      <p className="text-sm text-gray-500">
-                        Select <strong>Shipment</strong> &{" "}
-                        <strong>Carton</strong> to view existing records from
-                        server.
-                      </p>
-                    </div>
-                  )}
-                </div>
+                <PreviewSection productInfo={previewData} />
               </div>
             </div>
           </div>
