@@ -353,7 +353,7 @@ const FormSection = ({
               className="bg-linear-to-br from-white to-blue-50 rounded-2xl border-2 border-blue-100 overflow-hidden transition-all duration-300 hover:border-purple-200"
             >
               <div className="flex flex-col">
-                <div className="flex justify-between items-center p-3 rounded-2xl border-b border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
+                <div className="flex justify-between items-center p-3 rounded-t-2xl border-b border-blue-100 bg-linear-to-r from-blue-50 to-purple-50">
                   <div className="flex items-center gap-3">
                     <button
                       type="button"
@@ -396,52 +396,39 @@ const FormSection = ({
                   </div>
                 </div>
 
-                {!section.isExpanded &&
-                  (section.customerName || section.goodsName) && (
-                    <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm font-medium text-gray-600 p-2 mx-30">
-                      {section.customerName && (
-                        <span className="flex items-center gap-1 bg-black/5! px-3 py-1 rounded-2xl">
-                          <span className="text-purple-600 font-bold uppercase text-[12px] mt-1">
-                            Customer:
-                          </span>
-                          <span className="truncate max-w-37.5">
-                            {(() => {
-                              const searchId = section.customerName;
-                              if (!searchId) return "Select Customer";
-
-                              const found = allCustomerDetails.find(
-                                (c) => String(c.id) === String(searchId)
-                              );
-
-                              if (found && found.text) {
-                                return found.text.split(" :")[0];
-                              }
-
-                              return searchId;
-                            })()}
+                {!section.isExpanded && (
+                  <div className="px-3 py-2 border-t border-purple-100 rounded-b-2xl bg-linear-to-r from-blue-50 to-purple-50">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-4">
+                        <span className="text-gray-600 bg-white! py-1 px-2 rounded-full">
+                          Customer:{" "}
+                          <span className="font-semibold text-gray-800">
+                            {section.customerName || "Not set"}
                           </span>
                         </span>
-                      )}
-                      {section.goodsName && (
-                        <span className="flex items-center gap-1 bg-black/5! px-3 py-1 rounded-2xl">
-                          <span className="text-blue-600 font-bold uppercase text-[12px] mt-1">
-                            Goods:
-                          </span>
-                          <span className="truncate max-w-37.5">
-                            {section.goodsName}
+                        <span className="text-gray-600 bg-white! py-1 px-2 rounded-full">
+                          Goods:{" "}
+                          <span className="font-semibold text-gray-800">
+                            {section.goodsName || "Not set"}
                           </span>
                         </span>
-                      )}
-                      {section.goodsQuantity && (
-                        <span className="flex items-center gap-1 bg-black/5! px-3 py-1 rounded-2xl">
-                          <span className="text-teal-600 font-bold uppercase text-[12px] mt-1">
-                            Qty:
+                        <span className="text-gray-600 bg-white! py-1 px-2 rounded-full">
+                          Qty:{" "}
+                          <span className="font-semibold text-gray-800">
+                            {section.goodsQuantity || "0"}
                           </span>
-                          {section.goodsQuantity}
                         </span>
-                      )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => toggleSectionCollapse(section.id)}
+                        className="text-purple-600 hover:text-purple-700 font-medium"
+                      >
+                        Expand to edit
+                      </button>
                     </div>
-                  )}
+                  </div>
+                )}
               </div>
 
               <div
