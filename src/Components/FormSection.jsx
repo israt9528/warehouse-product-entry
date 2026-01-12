@@ -15,19 +15,15 @@ const FormSection = ({
   setCtnNo,
   customerSections,
   setCustomerSections,
-  // Props from App.jsx
-  allShipmentDetails,
-  setAllShipmentDetails,
-  allCustomerDetails,
-  setAllCustomerDetails,
+
   hideButtons,
 
   BASE = "http://localhost/invi",
 }) => {
-  
   const shipmentRef = useRef(null);
   const ctnRef = useRef(null);
-  const customerRef = useRef(null);
+  // const customerRef = useRef(null);
+  const customerRefs = useRef({});
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
 
@@ -41,7 +37,7 @@ const FormSection = ({
     name: "",
     mobile: "",
     address: "",
-    ctnNo: "",          
+    ctnNo: "",
   });
 
   const handleAddNewItem = (type) => {
@@ -86,7 +82,7 @@ const FormSection = ({
       }
 
       url = `${BASE}/index.php/plugins/freight/save-carton`;
-      formData.append("shipment", shipmentId); 
+      formData.append("shipment", shipmentId);
       formData.append("carton_name", newItemData.ctnNo);
     }
 
@@ -117,10 +113,7 @@ const FormSection = ({
           setShipmentId(result.id);
           setShipmentName(finalName);
 
-          shipmentRef.current?.injectAndSelectOption(
-            result.id,
-            finalName
-          );
+          shipmentRef.current?.injectAndSelectOption(result.id, finalName);
 
           setCtnId("");
           setCtnNo("");
@@ -131,32 +124,48 @@ const FormSection = ({
           setCtnId(result.id);
           setCtnNo(finalName);
 
-          ctnRef.current?.injectAndSelectOption(
-            result.id,
-            finalName
-          );
+          ctnRef.current?.injectAndSelectOption(result.id, finalName);
         }
 
         /* ================= CUSTOMER ================= */
+        // if (modalType === "customer") {
+        //   setCustomerSections((sections) =>
+        //     sections.map((section) =>
+        //       section.isExpanded
+        //         ? {
+        //             ...section,
+        //             customerId: result.id,
+        //             customerName: finalName,
+        //           }
+        //         : section
+        //     )
+        //   );
+
+        //   customerRef.current?.injectAndSelectOption(
+        //     result.id,
+        //     finalName
+        //   );
+        // }
         if (modalType === "customer") {
           setCustomerSections((sections) =>
-            sections.map((section) =>
-              section.isExpanded
-                ? {
-                    ...section,
-                    customerId: result.id,
-                    customerName: finalName,
-                  }
-                : section
-            )
-          );
+            sections.map((section) => {
+              if (section.isExpanded) {
+                // CALL THE REF HERE: Target the specific row's dropdown
+                customerRefs.current[section.id]?.injectAndSelectOption(
+                  result.id,
+                  finalName
+                );
 
-          customerRef.current?.injectAndSelectOption(
-            result.id,
-            finalName
+                return {
+                  ...section,
+                  customerId: result.id,
+                  customerName: finalName,
+                };
+              }
+              return section;
+            })
           );
         }
-
 
         setNewItemData({
           shipmentName: "",
@@ -377,7 +386,7 @@ const FormSection = ({
                   setCtnId("");
                   setCtnNo("");
                 }}
-                onAddNew={() => handleAddNewItem("shipment")}   
+                onAddNew={() => handleAddNewItem("shipment")}
                 placeholder="Select shipment"
                 apiEndpoint={`${BASE}/index.php/plugins/freight/shipments`}
               />
@@ -392,11 +401,11 @@ const FormSection = ({
                   setCtnId(option?.id || "");
                   setCtnNo(option?.text || "");
                 }}
-                onAddNew={() => handleAddNewItem("ctn")}  
-                placeholder="Select CTN"      
+                onAddNew={() => handleAddNewItem("ctn")}
+                placeholder="Select CTN"
                 apiEndpoint={`${BASE}/index.php/plugins/freight/cartons`}
                 extraParams={{
-                  shipment_id: shipmentId,  
+                  shipment_id: shipmentId,
                 }}
               />
             </div>
@@ -497,12 +506,21 @@ const FormSection = ({
                 <div className="space-y-6">
                   <div className="bg-linear-to-r from-purple-50 to-blue-50 rounded-xl p-3 border border-purple-100">
                     <DropdownWithSearch
-                      ref={customerRef}
+                      // ref={customerRef}
+                      ref={(el) => (customerRefs.current[section.id] = el)}
                       label="Customer Name"
-                      value={section.customerId}    
+                      value={section.customerId}
                       onChange={(option) => {
-                        handleCustomerSectionChange(section.id, "customerId", option?.id || "");
-                        handleCustomerSectionChange(section.id, "customerName", option?.text || "");
+                        handleCustomerSectionChange(
+                          section.id,
+                          "customerId",
+                          option?.id || ""
+                        );
+                        handleCustomerSectionChange(
+                          section.id,
+                          "customerName",
+                          option?.text || ""
+                        );
                       }}
                       placeholder="Select customer"
                       isRequired
