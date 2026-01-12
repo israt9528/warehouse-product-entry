@@ -7,7 +7,8 @@ import { FaLocationArrow } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
 import Swal from "sweetalert2";
 
-const BASE = "http://localhost/invi/";
+const BASE = "<?php echo BASE; ?>";
+// const BASE = "http://localhost/invi/";
 
 const App = () => {
   const [previewData, setPreviewData] = useState(null);
