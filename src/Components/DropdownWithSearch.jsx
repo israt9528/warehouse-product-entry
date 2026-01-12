@@ -1,10 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import $ from "jquery";
 import select2 from "select2";
 import "select2/dist/css/select2.min.css";
 import { IoIosAddCircle } from "react-icons/io";
 
-const DropdownWithSearch = ({
+const DropdownWithSearch = forwardRef(({
   label,
   options = [],
   value,
@@ -13,8 +13,34 @@ const DropdownWithSearch = ({
   isRequired = false,
   onAddNew,
   apiEndpoint,
-}) => {
+  extraParams = {},   
+}, ref) => {
   const selectRef = useRef(null);
+  const optionsCacheRef = useRef([]);
+
+  const injectAndSelectOption = (id, text) => {
+    const $select = $(selectRef.current);
+
+    // cache এ ঢুকাই
+    optionsCacheRef.current.push({
+      id,
+      text,
+    });
+
+    // যদি option DOM এ না থাকে
+    if ($select.find(`option[value="${id}"]`).length === 0) {
+      const newOption = new Option(text, id, true, true);
+      $select.append(newOption);
+    }
+
+    // select করে দেই
+    $select.val(id).trigger("change.select2");
+  };
+  
+  useEffect(() => {
+    if (!selectRef.current) return;
+    selectRef.current.injectAndSelectOption = injectAndSelectOption;
+  }, []);
 
   useEffect(() => {
     if ($.fn && !$.fn.select2) {
@@ -35,21 +61,26 @@ const DropdownWithSearch = ({
             delay: 250,
             data: (params) => {
               return {
-                search: params.term || "",
                 q: params.term || "",
-                type: "query",
+                search: params.term || "",
+                ...extraParams,   
               };
             },
             processResults: (data) => {
               const items = data.result || data.results || data || [];
+
+              const mapped = items.map((item) => ({
+                id: typeof item === "object" ? item.id || item.text : item,
+                text:
+                  typeof item === "object"
+                    ? item.text || item.name || item.client_name
+                    : item,
+              }));
+
+              optionsCacheRef.current = mapped; 
+
               return {
-                results: items.map((item) => ({
-                  id: typeof item === "object" ? item.id || item.text : item,
-                  text:
-                    typeof item === "object"
-                      ? item.text || item.name || item.client_name
-                      : item,
-                })),
+                results: mapped,
               };
             },
             cache: true,
@@ -59,9 +90,16 @@ const DropdownWithSearch = ({
 
     // Handle Change
     $select.on("change", () => {
-      const selectedValue = $select.val();
-      if (selectedValue !== value) {
-        onChange(selectedValue);
+      const selectedId = $select.val();
+
+      const selectedOption = optionsCacheRef.current.find(
+        (opt) => String(opt.id) === String(selectedId)
+      );
+
+      if (selectedOption) {
+        onChange(selectedOption);
+      } else {
+        onChange(null);
       }
     });
 
@@ -71,15 +109,37 @@ const DropdownWithSearch = ({
         $select.select2("destroy");
       }
     };
-  }, [apiEndpoint, placeholder]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [apiEndpoint, placeholder, JSON.stringify(extraParams)]);
 
   // Sync state changes from outside
-  useEffect(() => {
-    const $select = $(selectRef.current);
-    if ($select.val() !== value) {
-      $select.val(value).trigger("change.select2");
-    }
-  }, [value]);
+    useEffect(() => {
+      const $select = $(selectRef.current);
+
+      if (!value) return;
+
+      // cache থেকে selected option বের করি
+      const selectedOption = optionsCacheRef.current.find(
+        (opt) => String(opt.id) === String(value)
+      );
+
+      if (selectedOption) {
+        // যদি option DOM এ না থাকে, manually add করি
+        let optionExists = $select.find(`option[value="${value}"]`).length > 0;
+
+        if (!optionExists) {
+          const newOption = new Option(
+            selectedOption.text,
+            selectedOption.id,
+            true,
+            true
+          );
+          $select.append(newOption);
+        }
+
+        $select.val(value).trigger("change.select2");
+      }
+    }, [value]);
+
 
   return (
     <div className="w-full relative group">
@@ -114,6 +174,6 @@ const DropdownWithSearch = ({
       </div>
     </div>
   );
-};
+});
 
 export default DropdownWithSearch;

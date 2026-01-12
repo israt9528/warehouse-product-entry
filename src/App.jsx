@@ -7,13 +7,15 @@ import { FaLocationArrow } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
 import Swal from "sweetalert2";
 
-const BASE = "<?php echo BASE; ?>";
-// const BASE = "http://localhost/invi/";
+const BASE = "http://localhost/invi/";
 
 const App = () => {
   const [previewData, setPreviewData] = useState(null);
 
-  const [shipment, setShipment] = useState("");
+  const [shipmentId, setShipmentId] = useState("");
+  const [shipmentName, setShipmentName] = useState("");
+
+  const [ctnId, setCtnId] = useState("");
   const [ctnNo, setCtnNo] = useState("");
   const [customerSections, setCustomerSections] = useState([
     {
@@ -31,6 +33,25 @@ const App = () => {
 
   const [allShipmentDetails, setAllShipmentDetails] = useState([]);
   const [allCustomerDetails, setAllCustomerDetails] = useState([]);
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const response = await fetch(
+          `${BASE}index.php/client/ajax_clientDropdown`
+        );
+        const data = await response.json();
+
+        if (Array.isArray(data)) {
+          setAllCustomerDetails(data);
+        }
+      } catch (error) {
+        console.error("Error loading customer list:", error);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
 
   // ADD CUSTOMER LOGIC (Moved from FormSection)
   const addCustomerSection = () => {
@@ -55,17 +76,17 @@ const App = () => {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
 
-    if (!shipment || !ctnNo) {
+    if (!shipmentId || !ctnId) {
       toast.error("Please select Shipment and CTN No.");
       return;
     }
 
     const formData = new URLSearchParams();
-    formData.append("shipment_id", shipment);
-    formData.append("carton_id", ctnNo);
+    formData.append("shipment_id", shipmentId);
+    formData.append("carton_id", ctnId);
 
     customerSections.forEach((section) => {
-      formData.append("client_id[]", section.customerName);
+      formData.append("client_id[]", section.customerId);
       formData.append("chinese_name[]", section.chineseName);
       formData.append("goods_name[]", section.goodsName);
       formData.append("goods_qty[]", section.goodsQuantity);
@@ -106,7 +127,8 @@ const App = () => {
         // toast.success(res.message || "Data saved successfully!");
 
         setCtnNo("");
-        setShipment("");
+        setShipmentId("");
+        setShipmentName("");
         setCustomerSections([
           {
             id: 1,
@@ -131,7 +153,7 @@ const App = () => {
 
   useEffect(() => {
     const loadPreview = async () => {
-      if (!shipment || !ctnNo) {
+      if (!shipmentId || !ctnId) {
         setPreviewData(null);
         return;
       }
@@ -143,8 +165,8 @@ const App = () => {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: new URLSearchParams({
-              shipment_id: shipment,
-              carton_id: ctnNo,
+              shipment_id: shipmentId,
+              carton_id: ctnId,
             }).toString(),
           }
         );
@@ -180,7 +202,7 @@ const App = () => {
     };
 
     loadPreview();
-  }, [shipment, ctnNo]);
+  }, [shipmentId, ctnId]);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-purple-50 py-2">
@@ -195,17 +217,22 @@ const App = () => {
             </div>
             <div className="bg-white rounded-b-2xl shadow-2xl overflow-hidden border border-gray-200">
               <FormSection
-                shipment={shipment}
-                setShipment={setShipment}
-                ctnNo={ctnNo}
-                setCtnNo={setCtnNo}
-                customerSections={customerSections}
-                setCustomerSections={setCustomerSections}
-                allShipmentDetails={allShipmentDetails}
-                setAllShipmentDetails={setAllShipmentDetails}
-                allCustomerDetails={allCustomerDetails}
-                setAllCustomerDetails={setAllCustomerDetails}
-                hideButtons={true}
+                 shipmentId={shipmentId}
+                  setShipmentId={setShipmentId}
+                  shipmentName={shipmentName}
+                  setShipmentName={setShipmentName}   
+                  
+                  ctnId={ctnId}
+                  setCtnId={setCtnId}
+                  ctnNo={ctnNo}
+                  setCtnNo={setCtnNo}
+                  customerSections={customerSections}
+                  setCustomerSections={setCustomerSections}
+                  allShipmentDetails={allShipmentDetails}
+                  setAllShipmentDetails={setAllShipmentDetails}
+                  allCustomerDetails={allCustomerDetails}
+                  setAllCustomerDetails={setAllCustomerDetails}
+                  hideButtons={true}
               />
 
               {/* ACTION BUTTONS MOVED HERE */}

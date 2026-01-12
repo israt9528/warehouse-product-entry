@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { IoIosAddCircle, IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import DropdownWithSearch from "./DropdownWithSearch";
 import { FaTrash } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 const FormSection = ({
-  shipment,
-  setShipment,
+  shipmentId,
+  setShipmentId,
+  shipmentName,
+  setShipmentName,
+  ctnId,
+  setCtnId,
   ctnNo,
   setCtnNo,
   customerSections,
@@ -17,8 +21,13 @@ const FormSection = ({
   allCustomerDetails,
   setAllCustomerDetails,
   hideButtons,
+
   BASE = "http://localhost/invi",
 }) => {
+  
+  const shipmentRef = useRef(null);
+  const ctnRef = useRef(null);
+  const customerRef = useRef(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
 
@@ -32,6 +41,7 @@ const FormSection = ({
     name: "",
     mobile: "",
     address: "",
+    ctnNo: "",          
   });
 
   const handleAddNewItem = (type) => {
@@ -48,6 +58,7 @@ const FormSection = ({
         toast.error("Shipment Name is required");
         return;
       }
+
       url = `${BASE}/index.php/plugins/freight/save-shipment`;
       formData.append("shipment_name", newItemData.shipmentName);
       formData.append("shipment_type", newItemData.shipmentType);
@@ -64,12 +75,19 @@ const FormSection = ({
       formData.append("client_address", newItemData.address);
       formData.append("client_star", "0");
     } else if (modalType === "ctn") {
-      if (!newItemData.shipmentName.trim()) {
+      if (!newItemData.ctnNo.trim()) {
         toast.error("CTN Number is required");
         return;
       }
+
+      if (!shipmentId) {
+        toast.error("Please select shipment first");
+        return;
+      }
+
       url = `${BASE}/index.php/plugins/freight/save-carton`;
-      formData.append("ctn_no", newItemData.shipmentName);
+      formData.append("shipment", shipmentId); 
+      formData.append("carton_name", newItemData.ctnNo);
     }
 
     try {
@@ -90,30 +108,55 @@ const FormSection = ({
           result.name ||
           (modalType === "customer"
             ? newItemData.name
+            : modalType === "ctn"
+            ? newItemData.ctnNo
             : newItemData.shipmentName);
 
-        if (modalType === "ctn") {
-          setCtnNo(finalName);
-        } else if (modalType === "shipment") {
-          setAllShipmentDetails([
-            ...allShipmentDetails,
-            { ...newItemData, id: result.id },
-          ]);
-          setShipment(finalName);
-        } else if (modalType === "customer") {
-          setAllCustomerDetails([
-            ...allCustomerDetails,
-            { ...newItemData, id: result.id },
-          ]);
+        /* ================= SHIPMENT ================= */
+        if (modalType === "shipment") {
+          setShipmentId(result.id);
+          setShipmentName(finalName);
 
-          setCustomerSections((sections) =>
-            sections.map((section) => ({
-              ...section,
-              customerName:
-                section.customerName === "" ? finalName : section.customerName,
-            }))
+          shipmentRef.current?.injectAndSelectOption(
+            result.id,
+            finalName
+          );
+
+          setCtnId("");
+          setCtnNo("");
+        }
+
+        /* ================= CTN ================= */
+        if (modalType === "ctn") {
+          setCtnId(result.id);
+          setCtnNo(finalName);
+
+          ctnRef.current?.injectAndSelectOption(
+            result.id,
+            finalName
           );
         }
+
+        /* ================= CUSTOMER ================= */
+        if (modalType === "customer") {
+          setCustomerSections((sections) =>
+            sections.map((section) =>
+              section.isExpanded
+                ? {
+                    ...section,
+                    customerId: result.id,
+                    customerName: finalName,
+                  }
+                : section
+            )
+          );
+
+          customerRef.current?.injectAndSelectOption(
+            result.id,
+            finalName
+          );
+        }
+
 
         setNewItemData({
           shipmentName: "",
@@ -125,6 +168,7 @@ const FormSection = ({
           name: "",
           mobile: "",
           address: "",
+          ctnNo: "",
         });
         setIsAddModalOpen(false);
       } else {
@@ -288,11 +332,11 @@ const FormSection = ({
                   type="text"
                   placeholder="Enter CTN-XXX"
                   className="w-full text-black px-4 py-2 border-2 border-gray-300 rounded-xl"
-                  value={newItemData.shipmentName}
+                  value={newItemData.ctnNo}
                   onChange={(e) =>
                     setNewItemData({
                       ...newItemData,
-                      shipmentName: e.target.value,
+                      ctnNo: e.target.value,
                     })
                   }
                 />
@@ -324,25 +368,36 @@ const FormSection = ({
           <div className="flex gap-3">
             <div className="flex-1 bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-3 border border-blue-200">
               <DropdownWithSearch
+                ref={shipmentRef}
                 label="Shipment"
-                apiEndpoint={`${BASE}/index.php/plugins/freight/shipments`}
-                value={shipment}
-                onChange={setShipment}
+                value={shipmentId}
+                onChange={(option) => {
+                  setShipmentId(option?.id || "");
+                  setShipmentName(option?.text || "");
+                  setCtnId("");
+                  setCtnNo("");
+                }}
+                onAddNew={() => handleAddNewItem("shipment")}   
                 placeholder="Select shipment"
-                isRequired
-                onAddNew={() => handleAddNewItem("shipment")}
+                apiEndpoint={`${BASE}/index.php/plugins/freight/shipments`}
               />
             </div>
 
             <div className="flex-1 bg-linear-to-r from-blue-50 to-purple-50 rounded-xl p-3 border border-blue-200">
               <DropdownWithSearch
+                ref={ctnRef}
                 label="CTN No"
-                value={ctnNo}
-                onChange={setCtnNo}
-                placeholder="Select CTN"
-                isRequired
-                onAddNew={() => handleAddNewItem("ctn")}
+                value={ctnId}
+                onChange={(option) => {
+                  setCtnId(option?.id || "");
+                  setCtnNo(option?.text || "");
+                }}
+                onAddNew={() => handleAddNewItem("ctn")}  
+                placeholder="Select CTN"      
                 apiEndpoint={`${BASE}/index.php/plugins/freight/cartons`}
+                extraParams={{
+                  shipment_id: shipmentId,  
+                }}
               />
             </div>
           </div>
@@ -442,17 +497,15 @@ const FormSection = ({
                 <div className="space-y-6">
                   <div className="bg-linear-to-r from-purple-50 to-blue-50 rounded-xl p-3 border border-purple-100">
                     <DropdownWithSearch
+                      ref={customerRef}
                       label="Customer Name"
-                      value={section.customerName}
-                      onChange={(val) =>
-                        handleCustomerSectionChange(
-                          section.id,
-                          "customerName",
-                          val || ""
-                        )
-                      }
+                      value={section.customerId}    
+                      onChange={(option) => {
+                        handleCustomerSectionChange(section.id, "customerId", option?.id || "");
+                        handleCustomerSectionChange(section.id, "customerName", option?.text || "");
+                      }}
                       placeholder="Select customer"
-                      isRequired={true}
+                      isRequired
                       onAddNew={() => handleAddNewItem("customer")}
                       apiEndpoint={`${BASE}/index.php/client/ajax_clientDropdown`}
                     />
