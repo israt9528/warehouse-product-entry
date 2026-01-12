@@ -7,18 +7,16 @@ import toast from "react-hot-toast";
 const FormSection = ({
   shipmentId,
   setShipmentId,
-  shipmentName,
+  // shipmentName,
   setShipmentName,
   ctnId,
   setCtnId,
-  ctnNo,
+  // ctnNo,
   setCtnNo,
   customerSections,
   setCustomerSections,
-
   hideButtons,
-
-  BASE = "http://localhost/invi",
+  BASE,
 }) => {
   const shipmentRef = useRef(null);
   const ctnRef = useRef(null);

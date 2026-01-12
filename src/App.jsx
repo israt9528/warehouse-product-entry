@@ -31,28 +31,6 @@ const App = () => {
     },
   ]);
 
-  const [allShipmentDetails, setAllShipmentDetails] = useState([]);
-  const [allCustomerDetails, setAllCustomerDetails] = useState([]);
-
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const response = await fetch(
-          `${BASE}index.php/client/ajax_clientDropdown`
-        );
-        const data = await response.json();
-
-        if (Array.isArray(data)) {
-          setAllCustomerDetails(data);
-        }
-      } catch (error) {
-        console.error("Error loading customer list:", error);
-      }
-    };
-
-    fetchCustomers();
-  }, []);
-
   // ADD CUSTOMER LOGIC (Moved from FormSection)
   const addCustomerSection = () => {
     const newId = Math.max(...customerSections.map((s) => s.id), 0) + 1;
@@ -127,6 +105,7 @@ const App = () => {
         // toast.success(res.message || "Data saved successfully!");
 
         setCtnNo("");
+        setCtnId("");
         setShipmentId("");
         setShipmentName("");
         setCustomerSections([
@@ -217,22 +196,18 @@ const App = () => {
             </div>
             <div className="bg-white rounded-b-2xl shadow-2xl overflow-hidden border border-gray-200">
               <FormSection
-                 shipmentId={shipmentId}
-                  setShipmentId={setShipmentId}
-                  shipmentName={shipmentName}
-                  setShipmentName={setShipmentName}   
-                  
-                  ctnId={ctnId}
-                  setCtnId={setCtnId}
-                  ctnNo={ctnNo}
-                  setCtnNo={setCtnNo}
-                  customerSections={customerSections}
-                  setCustomerSections={setCustomerSections}
-                  allShipmentDetails={allShipmentDetails}
-                  setAllShipmentDetails={setAllShipmentDetails}
-                  allCustomerDetails={allCustomerDetails}
-                  setAllCustomerDetails={setAllCustomerDetails}
-                  hideButtons={true}
+                shipmentId={shipmentId}
+                setShipmentId={setShipmentId}
+                shipmentName={shipmentName}
+                setShipmentName={setShipmentName}
+                ctnId={ctnId}
+                setCtnId={setCtnId}
+                ctnNo={ctnNo}
+                setCtnNo={setCtnNo}
+                customerSections={customerSections}
+                setCustomerSections={setCustomerSections}
+                BASE={BASE}
+                hideButtons={true}
               />
 
               {/* ACTION BUTTONS MOVED HERE */}
