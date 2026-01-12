@@ -32,25 +32,6 @@ const App = () => {
   const [allShipmentDetails, setAllShipmentDetails] = useState([]);
   const [allCustomerDetails, setAllCustomerDetails] = useState([]);
 
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const response = await fetch(
-          `${BASE}index.php/client/ajax_clientDropdown`
-        );
-        const data = await response.json();
-
-        if (Array.isArray(data)) {
-          setAllCustomerDetails(data);
-        }
-      } catch (error) {
-        console.error("Error loading customer list:", error);
-      }
-    };
-
-    fetchCustomers();
-  }, []);
-
   // ADD CUSTOMER LOGIC (Moved from FormSection)
   const addCustomerSection = () => {
     const newId = Math.max(...customerSections.map((s) => s.id), 0) + 1;
